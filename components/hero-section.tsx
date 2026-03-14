@@ -31,15 +31,16 @@ export default function HeroSection() {
           backgroundAttachment: 'fixed',
         }}
       >
-        {/* Dark overlay with gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+        {/* Stronger dark overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-background" />
         
         {/* Animated particles effect */}
-        <div className="absolute inset-0 opacity-30">
-          <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-primary rounded-full animate-float" />
-          <div className="absolute top-1/3 right-1/4 w-3 h-3 bg-cyan-400 rounded-full animate-float delay-200" />
-          <div className="absolute bottom-1/3 left-1/3 w-2 h-2 bg-primary rounded-full animate-float delay-400" />
-          <div className="absolute top-2/3 right-1/3 w-2 h-2 bg-cyan-400 rounded-full animate-float delay-300" />
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-[15%] left-[10%] w-2 h-2 bg-primary rounded-full animate-float" />
+          <div className="absolute top-[25%] right-[15%] w-3 h-3 bg-cyan-400 rounded-full animate-float delay-200" />
+          <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-primary rounded-full animate-float delay-400" />
+          <div className="absolute top-[45%] right-[25%] w-2 h-2 bg-cyan-400 rounded-full animate-float delay-300" />
+          <div className="absolute top-[70%] right-[10%] w-2 h-2 bg-primary rounded-full animate-float delay-500" />
         </div>
       </div>
 
@@ -59,13 +60,13 @@ export default function HeroSection() {
         </h1>
 
         {/* Tagline */}
-        <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-4 text-balance glow-text animate-slide-up delay-200">
+        <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-4 text-balance glow-text animate-slide-up delay-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
           最刺激的躲猫猫之旅等你来战!
         </p>
 
         {/* Description */}
-        <p className="text-base sm:text-lg text-foreground/70 mb-10 max-w-2xl mx-auto text-pretty animate-slide-up delay-300">
-          加入 CGSBS 服务器，体验紧张刺激的躲猫猫玩法，与全球玩家一起享受最有趣的捉迷藏游戏
+        <p className="text-base sm:text-lg text-foreground/80 mb-10 max-w-2xl mx-auto text-pretty animate-slide-up delay-300 drop-shadow-lg">
+          加入 CGSBS 服务器，与小伙伴一起享受最有趣的躲猫猫游戏
         </p>
 
         {/* Buttons */}
@@ -110,12 +111,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Animated scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
-        <div className="w-6 h-10 border-2 border-foreground/30 rounded-full flex items-start justify-center p-2">
-          <div className="w-1 h-2 bg-primary rounded-full animate-pulse" />
-        </div>
-      </div>
+
     </section>
   );
 }

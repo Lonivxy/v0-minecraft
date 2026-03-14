@@ -143,10 +143,10 @@ export default function ServerStatus() {
         </div>
       </div>
 
-      {/* Display IP hint */}
+      {/* Display IP hint with NameMC link */}
       <div className="mt-8 glass rounded-lg p-4 border border-glass-border/50 animate-slide-up delay-300">
         <p className="text-xs text-foreground/60 text-center">
-          服务器地址: <span className="text-primary font-mono">cgsbs.asia</span> | 数据每 60 秒自动刷新
+          服务器地址: <span className="text-primary font-mono">cgsbs.asia</span> | 数据每 60 秒自动刷新 | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">NameMC 查看详情</a>
         </p>
       </div>
     </section>

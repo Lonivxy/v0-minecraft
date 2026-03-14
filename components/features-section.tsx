@@ -6,16 +6,16 @@ import { Eye, Zap, Gamepad2 } from 'lucide-react';
 const features = [
   {
     icon: Eye,
-    title: '经典躲猫猫',
-    description: '体验最刺激的躲猫猫玩法！变身成各种方块躲避猎人，或成为猎人追捕躲藏者，每一局都充满惊喜和欢笑',
+    title: '躲猫猫玩法',
+    description: '变身成各种方块躲避猎人，或成为猎人追捕躲藏者，每一局都充满惊喜和欢笑，快来体验吧！',
     color: 'from-orange-500 to-red-500',
     iconBg: 'bg-orange-500/20',
     iconColor: 'text-orange-400',
   },
   {
     icon: Gamepad2,
-    title: '自研游戏模式',
-    description: '不断更新的自研小游戏模式，让躲猫猫玩法更加丰富多彩，独特的游戏机制带来前所未有的游戏体验',
+    title: '多样游戏模式',
+    description: '除了经典躲猫猫，还有更多有趣的游戏模式等你探索，丰富多彩的玩法让你永不无聊',
     color: 'from-primary to-cyan-500',
     iconBg: 'bg-primary/20',
     iconColor: 'text-primary',
@@ -23,7 +23,7 @@ const features = [
   {
     icon: Zap,
     title: 'BGP 高速线路',
-    description: '全球 BGP 加速节点，延迟低至 20ms，稳定可靠的网络环境，让你的游戏体验丝滑顺畅无卡顿',
+    description: 'BGP 多线接入，延迟低、稳定性强，让你的游戏体验丝滑顺畅无卡顿',
     color: 'from-cyan-500 to-blue-500',
     iconBg: 'bg-cyan-500/20',
     iconColor: 'text-cyan-400',
@@ -59,7 +59,7 @@ export default function FeaturesSection() {
             为什么选择 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">CGSBS</span>
           </h2>
           <p className="text-foreground/70 max-w-2xl mx-auto text-lg">
-            我们致力于打造最有趣的躲猫猫游戏体验，为玩家提供稳定、创新、欢乐的游戏环境
+            稳定的网络、欢乐的氛围、有趣的玩法，这里有你想要的一切
           </p>
         </div>
 
