@@ -319,5 +319,8 @@
 .animate-title-gradient {
   background-image: linear-gradient(90deg, oklch(0.72 0.19 155), oklch(0.75 0.17 185), oklch(0.72 0.19 155));
   background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   animation: title-gradient 3s ease-in-out infinite;
 }
