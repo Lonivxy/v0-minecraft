@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Mail, School } from 'lucide-react';
 
 // Discord SVG Icon
 const DiscordIcon = () => (
@@ -23,11 +23,21 @@ export default function Footer() {
                 <span className="glow-text">CGSBS</span>
               </h3>
               <p className="text-foreground/70 leading-relaxed mb-4">
-                致力于为全球 Minecraft 玩家提供最有趣的躲猫猫游戏体验，打造充满欢笑和惊喜的游戏社区。
+                欢迎来到 CGSBS，一个充满欢笑与惊喜的 Minecraft 游戏社区。
               </p>
-              <p className="text-sm text-foreground/50">
+              <p className="text-sm text-foreground/50 mb-3">
                 服务器 IP: <span className="text-primary font-mono">cgsbs.asia</span>
               </p>
+              {/* School link */}
+              <a
+                href="https://sbs.gd.cn"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors group"
+              >
+                <School className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span>学校官网</span>
+              </a>
             </div>
 
             {/* Rules */}
@@ -86,6 +96,20 @@ export default function Footer() {
                   <div>
                     <p className="font-semibold text-foreground">Discord</p>
                     <p className="text-foreground/60 text-sm">dsc.gg/cgsbs</p>
+                  </div>
+                </a>
+
+                {/* Email */}
+                <a
+                  href="mailto:newbiemx1314@gmail.com"
+                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group"
+                >
+                  <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Mail className="w-5 h-5 text-green-400" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">联系服主</p>
+                    <p className="text-foreground/60 text-sm">newbiemx1314@gmail.com</p>
                   </div>
                 </a>
               </div>

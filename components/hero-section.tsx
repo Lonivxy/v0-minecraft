@@ -54,7 +54,7 @@ export default function HeroSection() {
 
         {/* Main Title */}
         <h1 className="text-6xl sm:text-7xl lg:text-9xl font-black mb-6 animate-scale-in delay-100">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-cyan-400 to-primary bg-[length:200%_auto] animate-shimmer">
+          <span className="text-transparent bg-clip-text animate-title-gradient">
             CGSBS
           </span>
         </h1>
