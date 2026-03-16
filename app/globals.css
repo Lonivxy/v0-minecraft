@@ -69,7 +69,24 @@
   }
   body {
     @apply bg-background text-foreground;
+    transition: background-color 0.4s ease, color 0.4s ease;
   }
+}
+
+/* Light mode overrides */
+html.light-mode .glass-strong {
+  background: oklch(1 0 0 / 0.75);
+  border-color: oklch(0.7 0.03 250 / 0.35);
+}
+html.light-mode .glass {
+  background: oklch(1 0 0 / 0.55);
+  border-color: oklch(0.7 0.03 250 / 0.3);
+}
+html.light-mode .glow-text {
+  text-shadow: 0 0 20px var(--glow), 0 0 40px var(--glow);
+}
+html.light-mode .animate-title-gradient {
+  filter: drop-shadow(0 0 20px rgba(0,0,0,0.15));
 }
 
 /* Glassmorphism utilities */

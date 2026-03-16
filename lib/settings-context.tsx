@@ -9,59 +9,106 @@ interface SettingsContextType {
   t: Translations;
   primaryHue: number;
   setPrimaryHue: (hue: number) => void;
+  isDark: boolean;
+  setIsDark: (dark: boolean) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
+function detectLanguage(): Language {
+  if (typeof navigator === 'undefined') return 'zh';
+  const lang = navigator.language.toLowerCase();
+  if (lang.startsWith('zh')) return 'zh';
+  if (lang.startsWith('ja')) return 'ja';
+  if (lang.startsWith('fr')) return 'fr';
+  return 'en';
+}
+
+function shouldBeDark(): boolean {
+  const hour = new Date().getHours();
+  // Dark mode outside 6am–6pm
+  return hour < 6 || hour >= 18;
+}
+
+function applyTheme(dark: boolean, hue: number) {
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
+  if (dark) {
+    root.style.setProperty('--background', 'oklch(0.12 0.01 250)');
+    root.style.setProperty('--foreground', 'oklch(0.95 0 0)');
+    root.style.setProperty('--card', 'oklch(0.15 0.01 250 / 0.6)');
+    root.style.setProperty('--card-foreground', 'oklch(0.95 0 0)');
+    root.style.setProperty('--muted-foreground', 'oklch(0.65 0 0)');
+    root.style.setProperty('--glass', 'oklch(0.15 0.02 250 / 0.4)');
+    root.style.setProperty('--glass-border', 'oklch(0.5 0.05 250 / 0.3)');
+    root.classList.add('dark-mode');
+    root.classList.remove('light-mode');
+  } else {
+    root.style.setProperty('--background', 'oklch(0.97 0.005 250)');
+    root.style.setProperty('--foreground', 'oklch(0.15 0.01 250)');
+    root.style.setProperty('--card', 'oklch(1 0 0 / 0.7)');
+    root.style.setProperty('--card-foreground', 'oklch(0.15 0.01 250)');
+    root.style.setProperty('--muted-foreground', 'oklch(0.45 0.01 250)');
+    root.style.setProperty('--glass', 'oklch(1 0 0 / 0.5)');
+    root.style.setProperty('--glass-border', 'oklch(0.7 0.03 250 / 0.4)');
+    root.classList.add('light-mode');
+    root.classList.remove('dark-mode');
+  }
+  root.style.setProperty('--primary', `oklch(0.60 0.19 ${hue})`);
+  root.style.setProperty('--accent', `oklch(0.60 0.19 ${hue})`);
+  root.style.setProperty('--ring', `oklch(0.60 0.19 ${hue})`);
+  root.style.setProperty('--glow', `oklch(0.60 0.19 ${hue} / 0.5)`);
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>('zh');
-  const [primaryHue, setPrimaryHueState] = useState(155); // Default green hue
+  const [primaryHue, setPrimaryHueState] = useState(155);
+  const [isDark, setIsDarkState] = useState(true);
 
   useEffect(() => {
-    // Load saved settings from localStorage
+    // Detect language from browser
     const savedLang = localStorage.getItem('cgsbs-language') as Language;
-    const savedHue = localStorage.getItem('cgsbs-hue');
-    
-    if (savedLang && (savedLang === 'zh' || savedLang === 'en')) {
+    if (savedLang && ['zh', 'en', 'ja', 'fr'].includes(savedLang)) {
       setLanguageState(savedLang);
+    } else {
+      setLanguageState(detectLanguage());
     }
-    if (savedHue) {
-      const hue = parseInt(savedHue, 10);
-      if (!isNaN(hue)) {
-        setPrimaryHueState(hue);
-        updateThemeColor(hue);
-      }
-    }
-  }, []);
 
-  const updateThemeColor = (hue: number) => {
-    if (typeof document !== 'undefined') {
-      document.documentElement.style.setProperty('--primary', `oklch(0.72 0.19 ${hue})`);
-      document.documentElement.style.setProperty('--accent', `oklch(0.72 0.19 ${hue})`);
-      document.documentElement.style.setProperty('--ring', `oklch(0.72 0.19 ${hue})`);
-      document.documentElement.style.setProperty('--glow', `oklch(0.72 0.19 ${hue} / 0.5)`);
-    }
-  };
+    // Detect dark/light mode: check saved preference, else use time
+    const savedDark = localStorage.getItem('cgsbs-dark');
+    const dark = savedDark !== null ? savedDark === 'true' : shouldBeDark();
+    setIsDarkState(dark);
+
+    // Load hue
+    const savedHue = localStorage.getItem('cgsbs-hue');
+    const hue = savedHue ? parseInt(savedHue, 10) : 155;
+    const validHue = isNaN(hue) ? 155 : hue;
+    setPrimaryHueState(validHue);
+
+    applyTheme(dark, validHue);
+  }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cgsbs-language', lang);
-    }
+    localStorage.setItem('cgsbs-language', lang);
   };
 
   const setPrimaryHue = (hue: number) => {
     setPrimaryHueState(hue);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('cgsbs-hue', hue.toString());
-    }
-    updateThemeColor(hue);
+    localStorage.setItem('cgsbs-hue', hue.toString());
+    applyTheme(isDark, hue);
+  };
+
+  const setIsDark = (dark: boolean) => {
+    setIsDarkState(dark);
+    localStorage.setItem('cgsbs-dark', dark.toString());
+    applyTheme(dark, primaryHue);
   };
 
   const t = translations[language];
 
   return (
-    <SettingsContext.Provider value={{ language, setLanguage, t, primaryHue, setPrimaryHue }}>
+    <SettingsContext.Provider value={{ language, setLanguage, t, primaryHue, setPrimaryHue, isDark, setIsDark }}>
       {children}
     </SettingsContext.Provider>
   );
