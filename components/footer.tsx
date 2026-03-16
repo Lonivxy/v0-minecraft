@@ -1,6 +1,7 @@
 'use client';
 
-import { MessageCircle, Mail, School } from 'lucide-react';
+import { MessageCircle, Mail, School, Globe } from 'lucide-react';
+import { useSettings } from '@/lib/settings-context';
 
 // Discord SVG Icon
 const DiscordIcon = () => (
@@ -11,6 +12,7 @@ const DiscordIcon = () => (
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const { t } = useSettings();
 
   return (
     <footer id="rules" className="relative z-10 mt-20 border-t border-glass-border">
@@ -23,49 +25,60 @@ export default function Footer() {
                 <span className="glow-text">CGSBS</span>
               </h3>
               <p className="text-foreground/70 leading-relaxed mb-4">
-                欢迎来到 CGSBS，一个充满欢笑与惊喜的 Minecraft 游戏社区。
+                {t.footer.welcome}
               </p>
               <p className="text-sm text-foreground/50 mb-3">
-                服务器 IP: <span className="text-primary font-mono">cgsbs.asia</span>
+                {t.footer.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span>
               </p>
-              {/* School link */}
-              <a
-                href="https://sbs.gd.cn"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors group"
-              >
-                <School className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>学校官网</span>
-              </a>
+              {/* Links */}
+              <div className="space-y-2">
+                <a
+                  href="https://sbs.gd.cn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors group"
+                >
+                  <School className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span>{t.footer.schoolWebsite}</span>
+                </a>
+                <a
+                  href="https://lovxy.cloud/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors group"
+                >
+                  <Globe className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span>{t.footer.ownerWebsite}</span>
+                </a>
+              </div>
             </div>
 
             {/* Rules */}
             <div className="animate-slide-up">
-              <h4 className="text-lg font-semibold text-foreground mb-4">服务器规则</h4>
+              <h4 className="text-lg font-semibold text-foreground mb-4">{t.footer.rules}</h4>
               <ul className="space-y-2 text-foreground/70">
                 <li className="flex items-start gap-2">
                   <span className="text-primary">1.</span>
-                  <span>禁止使用作弊或外挂</span>
+                  <span>{t.footer.rule1}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">2.</span>
-                  <span>尊重其他玩家，禁止辱骂</span>
+                  <span>{t.footer.rule2}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">3.</span>
-                  <span>禁止恶意卡 Bug</span>
+                  <span>{t.footer.rule3}</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary">4.</span>
-                  <span>服从管理员的指挥</span>
+                  <span>{t.footer.rule4}</span>
                 </li>
               </ul>
             </div>
 
             {/* Social Links */}
             <div className="animate-slide-in-right">
-              <h4 className="text-lg font-semibold text-foreground mb-4">加入社区</h4>
+              <h4 className="text-lg font-semibold text-foreground mb-4">{t.footer.joinCommunity}</h4>
               <div className="space-y-3">
                 {/* QQ Group */}
                 <a
@@ -78,7 +91,7 @@ export default function Footer() {
                     <MessageCircle className="w-5 h-5 text-blue-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">QQ 群</p>
+                    <p className="font-semibold text-foreground">{t.footer.qqGroup}</p>
                     <p className="text-foreground/60 text-sm">712839418</p>
                   </div>
                 </a>
@@ -108,7 +121,7 @@ export default function Footer() {
                     <Mail className="w-5 h-5 text-green-400" />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">联系服主</p>
+                    <p className="font-semibold text-foreground">{t.footer.contactOwner}</p>
                     <p className="text-foreground/60 text-sm">newbiemx1314@gmail.com</p>
                   </div>
                 </a>
@@ -122,20 +135,20 @@ export default function Footer() {
           {/* Bottom Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-foreground/60 text-sm text-center sm:text-left">
-              &copy; {currentYear} CGSBS Minecraft Server. 保留所有权利。
+              &copy; {currentYear} {t.footer.copyright}
             </p>
             <div className="flex items-center gap-6">
               <a
                 href="#rules"
                 className="text-foreground/60 hover:text-primary transition-colors text-sm"
               >
-                服务器规则
+                {t.footer.rules}
               </a>
               <a
                 href="#hero"
                 className="text-foreground/60 hover:text-primary transition-colors text-sm"
               >
-                返回顶部
+                {t.footer.backToTop}
               </a>
             </div>
           </div>

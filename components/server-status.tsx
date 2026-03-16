@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Radio, Users, Server, RefreshCw } from 'lucide-react';
+import { useSettings } from '@/lib/settings-context';
 
 interface ServerStatusData {
   online: boolean;
@@ -20,17 +21,17 @@ export default function ServerStatus() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const { t } = useSettings();
 
   const fetchStatus = async () => {
     try {
       setRefreshing(true);
-      // 使用 mcsrvstat.us API，实际IP是 x42.minekuai.com:53380
       const response = await fetch('https://api.mcsrvstat.us/3/x42.minekuai.com:53380');
       const data = await response.json();
       setStatus(data);
       setError(false);
     } catch (err) {
-      console.error('获取服务器状态失败:', err);
+      console.error('Failed to fetch server status:', err);
       setError(true);
     } finally {
       setLoading(false);
@@ -40,7 +41,6 @@ export default function ServerStatus() {
 
   useEffect(() => {
     fetchStatus();
-    // 每 60 秒更新一次服务器状态
     const interval = setInterval(fetchStatus, 60000);
     return () => clearInterval(interval);
   }, []);
@@ -55,7 +55,7 @@ export default function ServerStatus() {
     return (
       <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-12 text-center">
-          服务器实时状态
+          {t.status.title}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
@@ -77,13 +77,13 @@ export default function ServerStatus() {
     <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-center gap-4 mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground text-center">
-          服务器实时状态
+          {t.status.title}
         </h2>
         <button
           onClick={handleRefresh}
           disabled={refreshing}
           className="p-2 rounded-lg glass hover:bg-primary/20 transition-all duration-300 disabled:opacity-50"
-          title="刷新状态"
+          title={t.status.refresh}
         >
           <RefreshCw className={`w-5 h-5 text-primary ${refreshing ? 'animate-spin' : ''}`} />
         </button>
@@ -93,23 +93,23 @@ export default function ServerStatus() {
         {/* Online Status */}
         <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">服务器状态</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t.status.serverStatus}</h3>
             <div className={`p-3 rounded-lg transition-all duration-300 group-hover:scale-110 ${isOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
               <Radio className={`w-6 h-6 ${isOnline ? 'text-green-400 animate-status-pulse' : 'text-red-400'}`} />
             </div>
           </div>
           <p className={`text-3xl font-bold ${isOnline ? 'text-green-400' : 'text-red-400'}`}>
-            {isOnline ? '在线' : '离线'}
+            {isOnline ? t.status.online : t.status.offline}
           </p>
           <p className="text-sm text-foreground/50 mt-2">
-            {error ? '获取状态失败' : isOnline ? '服务器运行正常' : '服务器维护中'}
+            {error ? t.status.fetchFailed : isOnline ? t.status.runningNormal : t.status.maintenance}
           </p>
         </div>
 
         {/* Players */}
         <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-100">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">在线玩家</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t.status.onlinePlayers}</h3>
             <div className="p-3 rounded-lg bg-primary/20 transition-all duration-300 group-hover:scale-110">
               <Users className="w-6 h-6 text-primary" />
             </div>
@@ -125,7 +125,7 @@ export default function ServerStatus() {
               />
             </div>
             <p className="text-xs text-foreground/50 mt-2">
-              {playersMax > 0 ? Math.round((playersOnline / playersMax) * 100) : 0}% 容量
+              {playersMax > 0 ? Math.round((playersOnline / playersMax) * 100) : 0}% {t.status.capacity}
             </p>
           </div>
         </div>
@@ -133,20 +133,20 @@ export default function ServerStatus() {
         {/* Version */}
         <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-200">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">游戏版本</h3>
+            <h3 className="text-lg font-semibold text-foreground">{t.status.gameVersion}</h3>
             <div className="p-3 rounded-lg bg-cyan-500/20 transition-all duration-300 group-hover:scale-110">
               <Server className="w-6 h-6 text-cyan-400" />
             </div>
           </div>
           <p className="text-3xl font-bold text-cyan-400">{version}</p>
-          <p className="text-sm text-foreground/50 mt-2">原版纯净</p>
+          <p className="text-sm text-foreground/50 mt-2">{t.status.pureVanilla}</p>
         </div>
       </div>
 
       {/* Display IP hint with NameMC link */}
       <div className="mt-8 glass rounded-lg p-4 border border-glass-border/50 animate-slide-up delay-300">
         <p className="text-xs text-foreground/60 text-center">
-          服务器地址: <span className="text-primary font-mono">cgsbs.asia</span> | 数据每 60 秒自动刷新 | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">NameMC 查看详情</a>
+          {t.status.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span> | {t.status.autoRefresh} | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">{t.status.viewOnNameMC}</a>
         </p>
       </div>
     </section>
