@@ -6,7 +6,6 @@ import HeroSection from '@/components/hero-section';
 import ServerStatus from '@/components/server-status';
 import FeaturesSection from '@/components/features-section';
 import Footer from '@/components/footer';
-import SettingsPanel from '@/components/settings-panel';
 
 export default function ClientWrapper() {
   return (
@@ -25,8 +24,6 @@ export default function ClientWrapper() {
           <FeaturesSection />
           <Footer />
         </div>
-
-        <SettingsPanel />
       </main>
     </SettingsProvider>
   );
