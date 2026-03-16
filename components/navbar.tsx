@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
+import { useSettings } from '@/lib/settings-context';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { t } = useSettings();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,8 +18,8 @@ export default function Navbar() {
   }, []);
 
   const navItems = [
-    { label: '首页', href: '#hero' },
-    { label: '规则', href: '#rules' },
+    { label: t.nav.home, href: '#hero' },
+    { label: t.nav.rules, href: '#rules' },
   ];
 
   return (
@@ -52,7 +54,7 @@ export default function Navbar() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center justify-center p-2 rounded-lg text-foreground hover:bg-primary/20 focus:outline-none transition-all duration-300 hover:scale-110"
               >
-                <span className="sr-only">打开菜单</span>
+                <span className="sr-only">Open menu</span>
                 {isOpen ? (
                   <X className="h-6 w-6 transition-transform duration-300 rotate-90" />
                 ) : (

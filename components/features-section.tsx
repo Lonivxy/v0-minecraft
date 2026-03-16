@@ -2,37 +2,39 @@
 
 import { useEffect, useState, useRef } from 'react';
 import { Eye, Zap, Gamepad2 } from 'lucide-react';
-
-const features = [
-  {
-    icon: Eye,
-    title: '躲猫猫玩法',
-    description: '变身成各种方块躲避猎人，或成为猎人追捕躲藏者，每一局都充满惊喜和欢笑，快来体验吧！',
-    color: 'from-orange-500 to-red-500',
-    iconBg: 'bg-orange-500/20',
-    iconColor: 'text-orange-400',
-  },
-  {
-    icon: Gamepad2,
-    title: '多样游戏模式',
-    description: '除了经典躲猫猫，还有更多有趣的游戏模式等你探索，丰富多彩的玩法让你永不无聊',
-    color: 'from-primary to-cyan-500',
-    iconBg: 'bg-primary/20',
-    iconColor: 'text-primary',
-  },
-  {
-    icon: Zap,
-    title: 'BGP 高速线路',
-    description: 'BGP 多线接入，延迟低、稳定性强，让你的游戏体验丝滑顺畅无卡顿',
-    color: 'from-cyan-500 to-blue-500',
-    iconBg: 'bg-cyan-500/20',
-    iconColor: 'text-cyan-400',
-  },
-];
+import { useSettings } from '@/lib/settings-context';
 
 export default function FeaturesSection() {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
+  const { t } = useSettings();
+
+  const features = [
+    {
+      icon: Eye,
+      title: t.features.hideAndSeek,
+      description: t.features.hideAndSeekDesc,
+      color: 'from-orange-500 to-red-500',
+      iconBg: 'bg-orange-500/20',
+      iconColor: 'text-orange-400',
+    },
+    {
+      icon: Gamepad2,
+      title: t.features.gameModes,
+      description: t.features.gameModesDesc,
+      color: 'from-primary to-cyan-500',
+      iconBg: 'bg-primary/20',
+      iconColor: 'text-primary',
+    },
+    {
+      icon: Zap,
+      title: t.features.bgpNetwork,
+      description: t.features.bgpNetworkDesc,
+      color: 'from-cyan-500 to-blue-500',
+      iconBg: 'bg-cyan-500/20',
+      iconColor: 'text-cyan-400',
+    },
+  ];
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,10 +58,10 @@ export default function FeaturesSection() {
       <div className="max-w-7xl mx-auto">
         <div className={`text-center mb-16 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4 text-balance">
-            为什么选择 <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">CGSBS</span>
+            {t.features.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">CGSBS</span>
           </h2>
           <p className="text-foreground/70 max-w-2xl mx-auto text-lg">
-            稳定的网络、欢乐的氛围、有趣的玩法，这里有你想要的一切
+            {t.features.subtitle}
           </p>
         </div>
 
