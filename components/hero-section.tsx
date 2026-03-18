@@ -7,7 +7,7 @@ import { useSettings } from '@/lib/settings-context';
 export default function HeroSection() {
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { t } = useSettings();
+  const { t, isDark } = useSettings();
   const serverIP = 'cgsbs.asia';
   const videoUrl = 'https://www.youtube.com/watch?v=yHZqm44uMxY';
   const texturePackUrl = 'https://raw.githubusercontent.com/Lonivxy/cgsbsHnS/refs/heads/main/hide_and_seek.zip';
@@ -24,28 +24,48 @@ export default function HeroSection() {
 
   return (
     <section id="hero" className="min-h-screen flex flex-col items-center justify-center relative overflow-hidden pt-20">
-      {/* Background with Minecraft texture */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: 'url(/images/minecraft-bg.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-        }}
-      >
-        {/* Stronger dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-background" />
-        
-        {/* Animated particles effect */}
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute top-[15%] left-[10%] w-2 h-2 bg-primary rounded-full animate-float" />
-          <div className="absolute top-[25%] right-[15%] w-3 h-3 bg-cyan-400 rounded-full animate-float delay-200" />
-          <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-primary rounded-full animate-float delay-400" />
-          <div className="absolute top-[45%] right-[25%] w-2 h-2 bg-cyan-400 rounded-full animate-float delay-300" />
-          <div className="absolute top-[70%] right-[10%] w-2 h-2 bg-primary rounded-full animate-float delay-500" />
+
+      {/* Dark mode: Minecraft image background */}
+      {mounted && isDark && (
+        <div
+          className="absolute inset-0 z-0 transition-opacity duration-500"
+          style={{
+            backgroundImage: 'url(/images/minecraft-bg.jpg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundAttachment: 'fixed',
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-background" />
+          {/* Floating particles */}
+          <div className="absolute inset-0 opacity-40">
+            <div className="absolute top-[15%] left-[10%] w-2 h-2 bg-primary rounded-full animate-float" />
+            <div className="absolute top-[25%] right-[15%] w-3 h-3 bg-cyan-400 rounded-full animate-float delay-200" />
+            <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-primary rounded-full animate-float delay-400" />
+            <div className="absolute top-[45%] right-[25%] w-2 h-2 bg-cyan-400 rounded-full animate-float delay-300" />
+            <div className="absolute top-[70%] right-[10%] w-2 h-2 bg-primary rounded-full animate-float delay-500" />
+          </div>
         </div>
-      </div>
+      )}
+
+      {/* Light mode: animated floating blocks background */}
+      {mounted && !isDark && (
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Subtle grid pattern */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[size:40px_40px]" />
+          {/* Floating pixel blocks */}
+          <div className="mc-block mc-block-1" />
+          <div className="mc-block mc-block-2" />
+          <div className="mc-block mc-block-3" />
+          <div className="mc-block mc-block-4" />
+          <div className="mc-block mc-block-5" />
+          <div className="mc-block mc-block-6" />
+          <div className="mc-block mc-block-7" />
+          <div className="mc-block mc-block-8" />
+          {/* Soft radial glow at center */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(34,197,94,0.07),transparent)]" />
+        </div>
+      )}
 
       {/* Content */}
       <div className={`relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto ${mounted ? 'animate-slide-up' : 'opacity-0'}`}>
