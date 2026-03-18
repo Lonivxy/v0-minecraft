@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { usePathname } from 'next/navigation';
 import { translations, Language, Translations } from './i18n';
 
 interface SettingsContextType {
@@ -33,6 +34,10 @@ function normalizeLanguage(lang: string | null | undefined): Language {
       'de',
       'nl',
       'pl',
+      'bo',
+      'ko',
+      'ar',
+      'th',
       'ru',
       'hi',
     ].includes(l)
@@ -57,6 +62,10 @@ function detectLanguage(): Language {
   if (lang.startsWith('de')) return 'de';
   if (lang.startsWith('nl')) return 'nl';
   if (lang.startsWith('pl')) return 'pl';
+  if (lang.startsWith('bo')) return 'bo';
+  if (lang.startsWith('ko')) return 'ko';
+  if (lang.startsWith('ar')) return 'ar';
+  if (lang.startsWith('th')) return 'th';
   if (lang.startsWith('ru')) return 'ru';
   if (lang.startsWith('hi')) return 'hi';
   if (lang.startsWith('en-gb')) return 'en-gb';
@@ -121,14 +130,17 @@ export function SettingsProvider({
   children: ReactNode;
   initialLanguage?: Language;
 }) {
+  const pathname = usePathname();
   const [language, setLanguageState] = useState<Language>(normalizeLanguage(initialLanguage));
   const [primaryHue, setPrimaryHueState] = useState(155);
   const [isDark, setIsDarkState] = useState(true);
 
   useEffect(() => {
-    // Detect language from browser
+    const routeLocale = pathname.split('/').filter(Boolean)[0];
     const savedLang = normalizeLanguage(localStorage.getItem('cgsbs-language'));
-    setLanguageState(normalizeLanguage(initialLanguage ?? savedLang ?? detectLanguage()));
+    const resolvedLanguage = normalizeLanguage(routeLocale ?? initialLanguage ?? savedLang ?? detectLanguage());
+    setLanguageState(resolvedLanguage);
+    localStorage.setItem('cgsbs-language', resolvedLanguage);
 
     // Detect dark/light mode: check saved preference, else use time
     const savedDark = localStorage.getItem('cgsbs-dark');
@@ -141,7 +153,7 @@ export function SettingsProvider({
     const validHue = isNaN(hue) ? 155 : hue;
     setPrimaryHueState(validHue);
 
-  }, [initialLanguage]);
+  }, [initialLanguage, pathname]);
 
   useEffect(() => {
     applyTheme(isDark, primaryHue);

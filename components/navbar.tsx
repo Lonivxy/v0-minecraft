@@ -19,6 +19,10 @@ const LANGUAGES: { code: Language; label: string }[] = [
   { code: 'de', label: 'Deutsch' },
   { code: 'nl', label: 'Nederlands' },
   { code: 'pl', label: 'Polski' },
+  { code: 'bo', label: 'བོད་ཡིག' },
+  { code: 'ko', label: '한국어' },
+  { code: 'ar', label: 'العربية' },
+  { code: 'th', label: 'ไทย' },
   { code: 'ru', label: 'Русский' },
   { code: 'hi', label: 'हिन्दी' },
 ];
