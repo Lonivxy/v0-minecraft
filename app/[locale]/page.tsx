@@ -11,6 +11,9 @@ const SUPPORTED_LOCALES: Language[] = [
   'en-gb',
   'ja',
   'fr',
+  'de',
+  'nl',
+  'pl',
   'ru',
   'hi',
 ];

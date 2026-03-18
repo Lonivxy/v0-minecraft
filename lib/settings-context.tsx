@@ -30,6 +30,9 @@ function normalizeLanguage(lang: string | null | undefined): Language {
       'en-gb',
       'ja',
       'fr',
+      'de',
+      'nl',
+      'pl',
       'ru',
       'hi',
     ].includes(l)
@@ -51,6 +54,9 @@ function detectLanguage(): Language {
   if (lang.startsWith('zh')) return 'zh-cn';
   if (lang.startsWith('ja')) return 'ja';
   if (lang.startsWith('fr')) return 'fr';
+  if (lang.startsWith('de')) return 'de';
+  if (lang.startsWith('nl')) return 'nl';
+  if (lang.startsWith('pl')) return 'pl';
   if (lang.startsWith('ru')) return 'ru';
   if (lang.startsWith('hi')) return 'hi';
   if (lang.startsWith('en-gb')) return 'en-gb';

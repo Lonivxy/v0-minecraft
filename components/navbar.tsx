@@ -16,6 +16,9 @@ const LANGUAGES: { code: Language; label: string }[] = [
   { code: 'en-gb', label: 'English (UK)' },
   { code: 'ja', label: '日本語' },
   { code: 'fr', label: 'Français' },
+  { code: 'de', label: 'Deutsch' },
+  { code: 'nl', label: 'Nederlands' },
+  { code: 'pl', label: 'Polski' },
   { code: 'ru', label: 'Русский' },
   { code: 'hi', label: 'हिन्दी' },
 ];
