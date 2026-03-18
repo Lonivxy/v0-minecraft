@@ -340,3 +340,84 @@ html.light-mode .animate-title-gradient {
   animation: title-shine 3s linear infinite;
   filter: drop-shadow(0 0 30px rgba(34, 197, 94, 0.4));
 }
+
+/* Light mode floating Minecraft block animations */
+@keyframes mc-float-1 {
+  0%   { transform: translateY(0)   rotate(0deg);   opacity: 0.18; }
+  50%  { transform: translateY(-60px) rotate(180deg); opacity: 0.28; }
+  100% { transform: translateY(0)   rotate(360deg); opacity: 0.18; }
+}
+@keyframes mc-float-2 {
+  0%   { transform: translateY(0)   rotate(0deg)   scale(1);    opacity: 0.12; }
+  50%  { transform: translateY(-80px) rotate(-180deg) scale(1.1); opacity: 0.22; }
+  100% { transform: translateY(0)   rotate(-360deg) scale(1);   opacity: 0.12; }
+}
+@keyframes mc-float-3 {
+  0%   { transform: translateY(0)   rotate(20deg)  scale(1);    opacity: 0.15; }
+  50%  { transform: translateY(-50px) rotate(200deg) scale(0.9); opacity: 0.25; }
+  100% { transform: translateY(0)   rotate(380deg) scale(1);    opacity: 0.15; }
+}
+
+.mc-block {
+  position: absolute;
+  border-radius: 4px;
+  image-rendering: pixelated;
+}
+
+/* Individual blocks – different sizes, positions, speeds, colours */
+.mc-block-1 {
+  width: 28px; height: 28px;
+  top: 12%; left: 8%;
+  background: #6aac3d;
+  box-shadow: inset -4px -4px 0 #4a7c2c, inset 4px 4px 0 #89d44f;
+  animation: mc-float-1 7s ease-in-out infinite;
+}
+.mc-block-2 {
+  width: 20px; height: 20px;
+  top: 70%; left: 14%;
+  background: #8B6914;
+  box-shadow: inset -3px -3px 0 #5c440d, inset 3px 3px 0 #b8891e;
+  animation: mc-float-2 9s ease-in-out infinite 1s;
+}
+.mc-block-3 {
+  width: 36px; height: 36px;
+  top: 20%; right: 10%;
+  background: #7b7b7b;
+  box-shadow: inset -5px -5px 0 #555, inset 5px 5px 0 #aaa;
+  animation: mc-float-3 8s ease-in-out infinite 0.5s;
+}
+.mc-block-4 {
+  width: 22px; height: 22px;
+  top: 55%; right: 18%;
+  background: #6aac3d;
+  box-shadow: inset -3px -3px 0 #4a7c2c, inset 3px 3px 0 #89d44f;
+  animation: mc-float-1 11s ease-in-out infinite 2s;
+}
+.mc-block-5 {
+  width: 16px; height: 16px;
+  top: 80%; right: 8%;
+  background: #5ba3e0;
+  box-shadow: inset -2px -2px 0 #3a7ab8, inset 2px 2px 0 #7ec0f5;
+  animation: mc-float-2 6s ease-in-out infinite 1.5s;
+}
+.mc-block-6 {
+  width: 30px; height: 30px;
+  top: 40%; left: 5%;
+  background: #c94f1c;
+  box-shadow: inset -4px -4px 0 #8c3510, inset 4px 4px 0 #e87040;
+  animation: mc-float-3 10s ease-in-out infinite 3s;
+}
+.mc-block-7 {
+  width: 18px; height: 18px;
+  top: 88%; left: 50%;
+  background: #7b7b7b;
+  box-shadow: inset -3px -3px 0 #555, inset 3px 3px 0 #aaa;
+  animation: mc-float-1 8s ease-in-out infinite 0.8s;
+}
+.mc-block-8 {
+  width: 24px; height: 24px;
+  top: 30%; left: 50%;
+  background: #8B6914;
+  box-shadow: inset -3px -3px 0 #5c440d, inset 3px 3px 0 #b8891e;
+  animation: mc-float-2 12s ease-in-out infinite 2.5s;
+}
