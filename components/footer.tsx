@@ -85,7 +85,7 @@ export default function Footer() {
                   href="https://qm.qq.com/cgi-bin/qm/qr?k=placeholder&jump_from=webapi"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group"
+                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group will-change-transform"
                 >
                   <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <MessageCircle className="w-5 h-5 text-blue-400" />
@@ -101,7 +101,7 @@ export default function Footer() {
                   href="http://dsc.gg/cgsbs"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group"
+                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group will-change-transform"
                 >
                   <div className="w-10 h-10 rounded-lg bg-indigo-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <DiscordIcon />
@@ -115,7 +115,7 @@ export default function Footer() {
                 {/* Email */}
                 <a
                   href="mailto:newbiemx1314@gmail.com"
-                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group"
+                  className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group will-change-transform"
                 >
                   <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Mail className="w-5 h-5 text-green-400" />

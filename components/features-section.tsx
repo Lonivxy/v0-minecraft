@@ -71,7 +71,7 @@ export default function FeaturesSection() {
             return (
               <div
                 key={index}
-                className={`glass-strong rounded-2xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-3 hover:shadow-2xl hover:shadow-primary/10 group cursor-pointer ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+                className={`glass-strong rounded-2xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-3 hover:shadow-2xl hover:shadow-primary/10 group cursor-pointer will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 {/* Icon */}

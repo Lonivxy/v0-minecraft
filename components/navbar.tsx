@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import type { PointerEvent as ReactPointerEvent } from 'react';
 import { Menu, X, Sun, Moon, Globe, Palette } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 import { Language } from '@/lib/i18n';
@@ -24,6 +25,8 @@ export default function Navbar() {
   const colorRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [chromaMode, setChromaMode] = useState(false);
+  const chromaIndexRef = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -35,11 +38,24 @@ export default function Navbar() {
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
-      if (colorRef.current && !colorRef.current.contains(e.target as Node)) setColorOpen(false);
+      if (colorRef.current && !colorRef.current.contains(e.target as Node)) {
+        setColorOpen(false);
+        setChromaMode(false);
+      }
     }
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
+
+  useEffect(() => {
+    if (!chromaMode || !colorOpen) return;
+    const timer = window.setInterval(() => {
+      chromaIndexRef.current = (chromaIndexRef.current + 1) % 256;
+      const nextHue = (chromaIndexRef.current / 255) * 360;
+      setPrimaryHue(nextHue);
+    }, 80);
+    return () => window.clearInterval(timer);
+  }, [chromaMode, colorOpen, setPrimaryHue]);
 
   // Draw color wheel on canvas
   useEffect(() => {
@@ -67,7 +83,7 @@ export default function Navbar() {
     ctx.fillStyle = isDark ? 'rgba(15,15,25,0.92)' : 'rgba(240,240,250,0.92)';
     ctx.fill();
     // Selection indicator
-    const selAngle = (primaryHue - 90) * Math.PI / 180;
+    const selAngle = primaryHue * Math.PI / 180;
     const ir = r * 0.725;
     const ix = cx + Math.cos(selAngle) * ir;
     const iy = cy + Math.sin(selAngle) * ir;
@@ -84,21 +100,37 @@ export default function Navbar() {
     ctx.fill();
   }, [primaryHue, colorOpen, isDark]);
 
-  const handleCanvasEvent = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const updateHueFromPointer = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
-    const x = clientX - rect.left - canvas.width / 2;
-    const y = clientY - rect.top - canvas.height / 2;
+    const x = clientX - rect.left - rect.width / 2;
+    const y = clientY - rect.top - rect.height / 2;
     const dist = Math.sqrt(x * x + y * y);
-    const r = Math.min(canvas.width, canvas.height) / 2 - 4;
+    const r = Math.min(rect.width, rect.height) / 2 - 4;
     if (dist > r * 0.45 && dist < r) {
-      let angle = Math.atan2(y, x) * 180 / Math.PI + 90;
+      let angle = Math.atan2(y, x) * 180 / Math.PI;
       if (angle < 0) angle += 360;
+      setChromaMode(false);
+      chromaIndexRef.current = Math.round((angle / 360) * 255);
       setPrimaryHue(Math.round(angle));
     }
+  };
+
+  const handlePointerDown = (e: ReactPointerEvent<HTMLCanvasElement>) => {
+    setIsDragging(true);
+    e.currentTarget.setPointerCapture(e.pointerId);
+    updateHueFromPointer(e.clientX, e.clientY);
+  };
+
+  const handlePointerMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
+    if (!isDragging) return;
+    updateHueFromPointer(e.clientX, e.clientY);
+  };
+
+  const handlePointerUp = (e: ReactPointerEvent<HTMLCanvasElement>) => {
+    setIsDragging(false);
+    e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
   const navItems = [
@@ -171,37 +203,60 @@ export default function Navbar() {
               <div ref={colorRef} className="relative">
                 <button
                   onClick={() => { setColorOpen(!colorOpen); setLangOpen(false); }}
-                  className="p-2 rounded-lg hover:bg-primary/20 transition-all duration-300 hover:scale-110"
+                  className={`p-2 rounded-lg hover:bg-primary/20 transition-all duration-300 hover:scale-110 ${colorOpen ? 'theme-trigger-active' : ''}`}
                   title={t.settings.themeColor}
                 >
                   <div
-                    className="w-5 h-5 rounded-full border-2 border-foreground/30"
+                    className="w-5 h-5 rounded-full border-2 border-foreground/30 theme-trigger-orb"
                     style={{ backgroundColor: `hsl(${primaryHue}, 80%, 55%)` }}
                   />
                 </button>
                 {colorOpen && (
-                  <div className="absolute right-0 top-full mt-2 glass-strong rounded-xl border border-glass-border shadow-xl p-4 animate-scale-in">
-                    <p className="text-xs text-foreground/50 mb-3 text-center font-medium">{t.settings.themeColor}</p>
+                  <div className="absolute right-0 top-full mt-2 glass-strong rounded-xl border border-glass-border shadow-xl p-4 theme-popover">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs text-foreground/50 font-medium">{t.settings.themeColor}</p>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-foreground/60 font-mono">H {Math.round(((((primaryHue % 360) + 360) % 360) / 360) * 255)}</span>
+                        <button
+                          onClick={() => {
+                            const idx = Math.round(((((primaryHue % 360) + 360) % 360) / 360) * 255);
+                            chromaIndexRef.current = idx;
+                            setChromaMode((prev) => !prev);
+                          }}
+                          className={`px-2 py-1 rounded-md text-[10px] font-bold tracking-wide transition-all duration-300 ${
+                            chromaMode
+                              ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/30'
+                              : 'glass text-foreground/70 hover:text-primary hover:bg-primary/15'
+                          }`}
+                        >
+                          CHROMA
+                        </button>
+                      </div>
+                    </div>
+                    <div className="theme-spectrum mb-3" />
                     <canvas
                       ref={canvasRef}
-                      width={160}
-                      height={160}
-                      className="cursor-crosshair block mx-auto"
-                      onClick={handleCanvasEvent}
-                      onMouseDown={() => setIsDragging(true)}
-                      onMouseUp={() => setIsDragging(false)}
-                      onMouseLeave={() => setIsDragging(false)}
-                      onMouseMove={(e) => isDragging && handleCanvasEvent(e)}
-                      onTouchStart={() => setIsDragging(true)}
-                      onTouchEnd={() => setIsDragging(false)}
-                      onTouchMove={(e) => isDragging && handleCanvasEvent(e)}
+                      width={180}
+                      height={180}
+                      className="cursor-crosshair block mx-auto touch-none transition-transform duration-300 ease-out hover:scale-[1.03] theme-wheel"
+                      onPointerDown={handlePointerDown}
+                      onPointerMove={handlePointerMove}
+                      onPointerUp={handlePointerUp}
+                      onPointerCancel={handlePointerUp}
+                      onPointerLeave={(e) => {
+                        if (isDragging) handlePointerUp(e);
+                      }}
                     />
                     {/* Presets */}
                     <div className="flex justify-center gap-1.5 mt-3">
                       {HUE_PRESETS.map((hue) => (
                         <button
                           key={hue}
-                          onClick={() => setPrimaryHue(hue)}
+                          onClick={() => {
+                            setChromaMode(false);
+                            chromaIndexRef.current = Math.round((hue / 360) * 255);
+                            setPrimaryHue(hue);
+                          }}
                           className={`w-6 h-6 rounded-full transition-all duration-200 hover:scale-125 ${
                             primaryHue === hue ? 'ring-2 ring-white ring-offset-1 ring-offset-transparent scale-110' : ''
                           }`}
@@ -270,11 +325,29 @@ export default function Navbar() {
                 {HUE_PRESETS.map((hue) => (
                   <button
                     key={hue}
-                    onClick={() => setPrimaryHue(hue)}
+                    onClick={() => {
+                      setChromaMode(false);
+                      chromaIndexRef.current = Math.round((hue / 360) * 255);
+                      setPrimaryHue(hue);
+                    }}
                     className={`w-7 h-7 rounded-full transition-all ${primaryHue === hue ? 'ring-2 ring-white scale-110' : ''}`}
                     style={{ backgroundColor: `hsl(${hue}, 80%, 55%)` }}
                   />
                 ))}
+                <button
+                  onClick={() => {
+                    const idx = Math.round(((((primaryHue % 360) + 360) % 360) / 360) * 255);
+                    chromaIndexRef.current = idx;
+                    setChromaMode((prev) => !prev);
+                  }}
+                  className={`px-2 py-1 rounded-md text-[10px] font-bold tracking-wide transition-all duration-300 ${
+                    chromaMode
+                      ? 'bg-primary text-primary-foreground'
+                      : 'glass text-foreground/70 hover:text-primary'
+                  }`}
+                >
+                  CHROMA
+                </button>
               </div>
             </div>
           </div>

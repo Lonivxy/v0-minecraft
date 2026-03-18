@@ -10,22 +10,10 @@ export const metadata: Metadata = {
   title: 'CGSBS - Minecraft 躲猫猫服务器',
   description: '欢迎来到 CGSBS Minecraft 服务器！体验最刺激的躲猫猫玩法，与全球玩家一起享受最有趣的捉迷藏游戏！',
   keywords: ['Minecraft', '我的世界', '躲猫猫', '服务器', 'CGSBS', '1.20.4', 'Hide and Seek'],
-  generator: 'v0.app',
+  generator: 'Lonivxy',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
     apple: '/apple-icon.png',
   },
 }

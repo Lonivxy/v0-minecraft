@@ -54,10 +54,11 @@ function applyTheme(dark: boolean, hue: number) {
     root.classList.add('light-mode');
     root.classList.remove('dark-mode');
   }
-  root.style.setProperty('--primary', `oklch(0.60 0.19 ${hue})`);
-  root.style.setProperty('--accent', `oklch(0.60 0.19 ${hue})`);
-  root.style.setProperty('--ring', `oklch(0.60 0.19 ${hue})`);
-  root.style.setProperty('--glow', `oklch(0.60 0.19 ${hue} / 0.5)`);
+  // Use HSL for hue-driven theme color so wheel hue matches UI hue 1:1.
+  root.style.setProperty('--primary', `hsl(${hue} 82% 56%)`);
+  root.style.setProperty('--accent', `hsl(${hue} 82% 56%)`);
+  root.style.setProperty('--ring', `hsl(${hue} 82% 56%)`);
+  root.style.setProperty('--glow', `hsl(${hue} 88% 56% / 0.52)`);
 }
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
@@ -85,8 +86,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const validHue = isNaN(hue) ? 155 : hue;
     setPrimaryHueState(validHue);
 
-    applyTheme(dark, validHue);
   }, []);
+
+  useEffect(() => {
+    applyTheme(isDark, primaryHue);
+  }, [isDark, primaryHue]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      localStorage.setItem('cgsbs-hue', primaryHue.toString());
+    }, 420);
+    return () => window.clearTimeout(timer);
+  }, [primaryHue]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
@@ -95,14 +106,11 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const setPrimaryHue = (hue: number) => {
     setPrimaryHueState(hue);
-    localStorage.setItem('cgsbs-hue', hue.toString());
-    applyTheme(isDark, hue);
   };
 
   const setIsDark = (dark: boolean) => {
     setIsDarkState(dark);
     localStorage.setItem('cgsbs-dark', dark.toString());
-    applyTheme(dark, primaryHue);
   };
 
   const t = translations[language];

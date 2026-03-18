@@ -91,7 +91,7 @@ export default function ServerStatus() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Online Status */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up">
+        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up will-change-transform">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.serverStatus}</h3>
             <div className={`p-3 rounded-lg transition-all duration-300 group-hover:scale-110 ${isOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
@@ -107,7 +107,7 @@ export default function ServerStatus() {
         </div>
 
         {/* Players */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-100">
+        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-100 will-change-transform">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.onlinePlayers}</h3>
             <div className="p-3 rounded-lg bg-primary/20 transition-all duration-300 group-hover:scale-110">
@@ -131,7 +131,7 @@ export default function ServerStatus() {
         </div>
 
         {/* Version */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-200">
+        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-200 will-change-transform">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.gameVersion}</h3>
             <div className="p-3 rounded-lg bg-cyan-500/20 transition-all duration-300 group-hover:scale-110">

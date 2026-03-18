@@ -1,8 +1,23 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { CSSProperties } from 'react';
 import { Copy, Check, Play, Download } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
+
+const HERO_STARS = [
+  { left: 6, top: 18, size: 2, delay: 0.2, duration: 5.4 },
+  { left: 14, top: 32, size: 1, delay: 1.1, duration: 4.8 },
+  { left: 21, top: 8, size: 2, delay: 2.3, duration: 6.2 },
+  { left: 31, top: 26, size: 1, delay: 0.4, duration: 5.9 },
+  { left: 42, top: 14, size: 2, delay: 1.7, duration: 5.1 },
+  { left: 55, top: 36, size: 2, delay: 0.9, duration: 6.8 },
+  { left: 66, top: 10, size: 1, delay: 2.7, duration: 5.6 },
+  { left: 74, top: 24, size: 2, delay: 1.4, duration: 6.5 },
+  { left: 84, top: 12, size: 1, delay: 0.6, duration: 4.9 },
+  { left: 12, top: 62, size: 1, delay: 1.9, duration: 5.7 },
+  { left: 63, top: 66, size: 1, delay: 2.9, duration: 5.2 },
+] as const;
 
 export default function HeroSection() {
   const [copied, setCopied] = useState(false);
@@ -33,12 +48,34 @@ export default function HeroSection() {
             backgroundImage: 'url(/images/minecraft-bg.jpg)',
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
+            backgroundAttachment: 'scroll',
           }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-background" />
+          <div className="hero-aurora" />
+          <div className="hero-beam hero-beam-1" />
+          <div className="hero-beam hero-beam-2" />
+          <div className="hero-beam hero-beam-3" />
+          <div className="hero-stars">
+            {HERO_STARS.map((star, index) => (
+              <span
+                key={index}
+                className="hero-star"
+                style={
+                  {
+                    left: `${star.left}%`,
+                    top: `${star.top}%`,
+                    width: star.size,
+                    height: star.size,
+                    animationDelay: `${star.delay}s`,
+                    animationDuration: `${star.duration}s`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
           {/* Floating particles */}
-          <div className="absolute inset-0 opacity-40">
+          <div className="absolute inset-0 opacity-40 pointer-events-none">
             <div className="absolute top-[15%] left-[10%] w-2 h-2 bg-primary rounded-full animate-float" />
             <div className="absolute top-[25%] right-[15%] w-3 h-3 bg-cyan-400 rounded-full animate-float delay-200" />
             <div className="absolute top-[60%] left-[20%] w-2 h-2 bg-primary rounded-full animate-float delay-400" />
@@ -51,6 +88,27 @@ export default function HeroSection() {
       {/* Light mode: animated floating blocks background */}
       {mounted && !isDark && (
         <div className="absolute inset-0 z-0 overflow-hidden">
+          <div className="hero-aurora" />
+          <div className="hero-beam hero-beam-1" />
+          <div className="hero-beam hero-beam-2" />
+          <div className="hero-stars">
+            {HERO_STARS.map((star, index) => (
+              <span
+                key={index}
+                className="hero-star"
+                style={
+                  {
+                    left: `${star.left}%`,
+                    top: `${star.top}%`,
+                    width: star.size,
+                    height: star.size,
+                    animationDelay: `${star.delay + 0.8}s`,
+                    animationDuration: `${star.duration + 0.5}s`,
+                  } as CSSProperties
+                }
+              />
+            ))}
+          </div>
           {/* Subtle grid pattern */}
           <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.04)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.04)_1px,transparent_1px)] bg-[size:40px_40px]" />
           {/* Floating pixel blocks */}
@@ -68,7 +126,7 @@ export default function HeroSection() {
       )}
 
       {/* Content */}
-      <div className={`relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto ${mounted ? 'animate-slide-up' : 'opacity-0'}`}>
+      <div className={`relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto ${mounted ? 'animate-slide-up' : 'opacity-0'} will-change-transform`}>
         {/* Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full border border-primary/30 mb-8 animate-scale-in">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-status-pulse" />
@@ -83,7 +141,13 @@ export default function HeroSection() {
         </h1>
 
         {/* Tagline */}
-        <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-foreground mb-4 text-balance glow-text animate-slide-up delay-200 drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+        <p
+          className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-4 text-balance animate-slide-up delay-200 ${
+            isDark
+              ? 'text-foreground glow-text drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]'
+              : 'text-foreground/90 drop-shadow-[0_1px_1px_rgba(255,255,255,0.7)]'
+          }`}
+        >
           {t.hero.tagline}
         </p>
 
@@ -97,7 +161,7 @@ export default function HeroSection() {
           {/* Copy IP Button */}
           <button
             onClick={handleCopyIP}
-            className="glass-strong hover:bg-primary/30 inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold text-foreground border-2 border-primary transition-all duration-300 hover:scale-105 animate-pulse-glow cursor-pointer group"
+            className="glass-strong hover:bg-primary/30 inline-flex items-center gap-3 px-8 py-4 rounded-xl text-lg font-semibold text-foreground border-2 border-primary transition-all duration-300 hover:scale-105 animate-pulse-glow cursor-pointer group will-change-transform"
           >
             {copied ? (
               <>
@@ -117,7 +181,7 @@ export default function HeroSection() {
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="glass hover:bg-foreground/10 inline-flex items-center gap-3 px-6 py-4 rounded-xl text-lg font-semibold text-foreground border border-glass-border transition-all duration-300 hover:scale-105 hover:border-primary/50 group"
+            className="glass hover:bg-foreground/10 inline-flex items-center gap-3 px-6 py-4 rounded-xl text-lg font-semibold text-foreground border border-glass-border transition-all duration-300 hover:scale-105 hover:border-primary/50 group will-change-transform"
           >
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
               <Play className="w-5 h-5 text-primary ml-0.5" />
@@ -131,7 +195,7 @@ export default function HeroSection() {
           <a
             href={texturePackUrl}
             download
-            className="glass hover:bg-cyan-500/20 inline-flex items-center gap-3 px-6 py-3 rounded-xl text-base font-semibold text-foreground border border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:border-cyan-400 group"
+            className="glass hover:bg-cyan-500/20 inline-flex items-center gap-3 px-6 py-3 rounded-xl text-base font-semibold text-foreground border border-cyan-500/50 transition-all duration-300 hover:scale-105 hover:border-cyan-400 group will-change-transform"
           >
             <Download className="w-5 h-5 text-cyan-400 group-hover:animate-bounce" />
             {t.hero.downloadPack}
@@ -139,7 +203,7 @@ export default function HeroSection() {
         </div>
 
         {/* Server Info Card */}
-        <div className="glass-strong rounded-2xl p-6 border border-glass-border max-w-md mx-auto animate-slide-up delay-500 hover:border-primary/50 transition-all duration-300 hover:scale-[1.02]">
+        <div className="glass-strong rounded-2xl p-6 border border-glass-border max-w-md mx-auto animate-slide-up delay-500 hover:border-primary/50 transition-all duration-300 hover:scale-[1.02] will-change-transform">
           <p className="text-foreground/60 text-sm mb-2">{t.hero.serverAddress}</p>
           <p className="text-2xl font-mono font-bold text-primary mb-1">{serverIP}</p>
           <p className="text-foreground/50 text-xs">{t.hero.version}</p>
