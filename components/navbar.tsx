@@ -2,20 +2,29 @@
 
 import { useState, useEffect, useRef } from 'react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, Sun, Moon, Globe, Palette } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 import { Language } from '@/lib/i18n';
 
 const LANGUAGES: { code: Language; label: string }[] = [
-  { code: 'zh', label: '中文' },
-  { code: 'en', label: 'English' },
+  { code: 'zh-cn', label: '简体中文' },
+  { code: 'zh-hant', label: '繁體中文' },
+  { code: 'zh-hk', label: '香港中文' },
+  { code: 'zh-tw', label: '台灣中文' },
+  { code: 'en-us', label: 'English (US)' },
+  { code: 'en-gb', label: 'English (UK)' },
   { code: 'ja', label: '日本語' },
   { code: 'fr', label: 'Français' },
+  { code: 'ru', label: 'Русский' },
+  { code: 'hi', label: 'हिन्दी' },
 ];
 
 const HUE_PRESETS = [155, 180, 220, 260, 320, 30, 60];
 
 export default function Navbar() {
+  const router = useRouter();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [langOpen, setLangOpen] = useState(false);
@@ -138,6 +147,13 @@ export default function Navbar() {
     { label: t.nav.rules, href: '#rules' },
   ];
 
+  const switchLanguageRoute = (lang: Language) => {
+    const segments = pathname.split('/').filter(Boolean);
+    const remaining = segments.length > 1 ? segments.slice(1) : [];
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    router.push(`/${lang}${remaining.length ? `/${remaining.join('/')}` : ''}${hash}`);
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-2' : 'py-4'}`}>
       <div className={`glass-strong mx-4 rounded-xl border border-glass-border transition-all duration-500 ${scrolled ? 'shadow-lg shadow-primary/10' : ''}`}>
@@ -183,11 +199,15 @@ export default function Navbar() {
                   <span>{LANGUAGES.find(l => l.code === language)?.label}</span>
                 </button>
                 {langOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-36 glass-strong rounded-xl border border-glass-border shadow-xl overflow-hidden animate-scale-in">
+                  <div className="absolute right-0 top-full mt-2 w-44 glass-strong rounded-xl border border-glass-border shadow-xl overflow-hidden animate-scale-in">
                     {LANGUAGES.map((lang) => (
                       <button
                         key={lang.code}
-                        onClick={() => { setLanguage(lang.code); setLangOpen(false); }}
+                        onClick={() => {
+                          setLanguage(lang.code);
+                          setLangOpen(false);
+                          switchLanguageRoute(lang.code);
+                        }}
                         className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary/20 ${
                           language === lang.code ? 'text-primary font-semibold' : 'text-foreground/80'
                         }`}
@@ -289,7 +309,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-80 border-t border-glass-border' : 'max-h-0'}`}>
+        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-[34rem] border-t border-glass-border' : 'max-h-0'}`}>
           <div className="px-4 py-3 space-y-1">
             {navItems.map((item) => (
               <a
@@ -308,7 +328,11 @@ export default function Navbar() {
                 {LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => { setLanguage(lang.code); setIsOpen(false); }}
+                    onClick={() => {
+                      setLanguage(lang.code);
+                      setIsOpen(false);
+                      switchLanguageRoute(lang.code);
+                    }}
                     className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                       language === lang.code ? 'bg-primary text-primary-foreground' : 'glass text-foreground/80'
                     }`}

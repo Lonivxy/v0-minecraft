@@ -25,6 +25,7 @@ export default function FeaturesSection() {
       color: 'from-primary to-cyan-500',
       iconBg: 'bg-primary/20',
       iconColor: 'text-primary',
+      link: 'https://minecraft-mcworld.com/70901/',
     },
     {
       icon: Zap,
@@ -58,7 +59,7 @@ export default function FeaturesSection() {
       <div className="max-w-7xl mx-auto">
         <div className={`text-center mb-16 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4 text-balance">
-            {t.features.title} <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-cyan-400">CGSBS</span>
+            {t.features.title} <span className="animate-title-gradient inline-block">CGSBS</span>
           </h2>
           <p className="text-foreground/70 max-w-2xl mx-auto text-lg">
             {t.features.subtitle}
@@ -88,6 +89,16 @@ export default function FeaturesSection() {
                 <p className="text-foreground/70 leading-relaxed">
                   {feature.description}
                 </p>
+                {feature.link && (
+                  <a
+                    href={feature.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex mt-4 text-sm text-primary hover:text-cyan-400 underline underline-offset-4 transition-colors"
+                  >
+                    https://minecraft-mcworld.com/70901/
+                  </a>
+                )}
 
                 {/* Bottom accent line */}
                 <div className={`h-1 w-0 group-hover:w-full bg-gradient-to-r ${feature.color} mt-6 transition-all duration-500 rounded-full`} />

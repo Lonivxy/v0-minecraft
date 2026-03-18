@@ -1,5 +1,5 @@
-import ClientWrapper from '@/components/client-wrapper';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
-  return <ClientWrapper />;
+  redirect('/zh-cn');
 }

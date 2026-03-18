@@ -6,10 +6,11 @@ import HeroSection from '@/components/hero-section';
 import ServerStatus from '@/components/server-status';
 import FeaturesSection from '@/components/features-section';
 import Footer from '@/components/footer';
+import type { Language } from '@/lib/i18n';
 
-export default function ClientWrapper() {
+export default function ClientWrapper({ initialLanguage }: { initialLanguage?: Language }) {
   return (
-    <SettingsProvider>
+    <SettingsProvider initialLanguage={initialLanguage}>
       <main className="relative min-h-screen bg-background text-foreground overflow-hidden">
         {/* Gradient background effects */}
         <div className="fixed inset-0 z-0 pointer-events-none">
