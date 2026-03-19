@@ -161,6 +161,17 @@ export default function Navbar() {
     router.push(`/${lang}${remaining.length ? `/${remaining.join('/')}` : ''}${hash}`);
   };
 
+  const handleThemeToggle = () => {
+    setIsDark(!isDark);
+  };
+
+  const handleLanguageSelect = (lang: Language, closeMobile = false) => {
+    setLanguage(lang);
+    setLangOpen(false);
+    if (closeMobile) setIsOpen(false);
+    switchLanguageRoute(lang);
+  };
+
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'py-2' : 'py-4'}`}>
       <div className={`glass-strong mx-4 rounded-xl border border-glass-border transition-all duration-500 ${scrolled ? 'shadow-lg shadow-primary/10' : ''}`}>
@@ -189,7 +200,7 @@ export default function Navbar() {
 
               {/* Day/Night toggle */}
               <button
-                onClick={() => setIsDark(!isDark)}
+                onClick={handleThemeToggle}
                 title={isDark ? t.settings.lightMode : t.settings.darkMode}
                 className="p-2 rounded-lg hover:bg-primary/20 hover:text-primary text-foreground/70 transition-all duration-300 hover:scale-110"
               >
@@ -210,11 +221,7 @@ export default function Navbar() {
                     {LANGUAGES.map((lang) => (
                       <button
                         key={lang.code}
-                        onClick={() => {
-                          setLanguage(lang.code);
-                          setLangOpen(false);
-                          switchLanguageRoute(lang.code);
-                        }}
+                        onClick={() => handleLanguageSelect(lang.code)}
                         className={`w-full text-left px-4 py-2.5 text-sm transition-colors hover:bg-primary/20 ${
                           language === lang.code ? 'text-primary font-semibold' : 'text-foreground/80'
                         }`}
@@ -300,7 +307,7 @@ export default function Navbar() {
             <div className="md:hidden flex items-center gap-2">
               {/* Day/Night toggle (mobile) */}
               <button
-                onClick={() => setIsDark(!isDark)}
+                onClick={handleThemeToggle}
                 className="p-2 rounded-lg hover:bg-primary/20 text-foreground/70 transition-all duration-300"
               >
                 {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -335,11 +342,7 @@ export default function Navbar() {
                 {LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => {
-                      setLanguage(lang.code);
-                      setIsOpen(false);
-                      switchLanguageRoute(lang.code);
-                    }}
+                    onClick={() => handleLanguageSelect(lang.code, true)}
                     className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
                       language === lang.code ? 'bg-primary text-primary-foreground' : 'glass text-foreground/80'
                     }`}

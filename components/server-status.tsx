@@ -21,7 +21,7 @@ export default function ServerStatus() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const { t } = useSettings();
+  const { t, triggerPageLoading } = useSettings();
 
   const fetchStatus = async () => {
     try {
@@ -47,6 +47,7 @@ export default function ServerStatus() {
 
   const handleRefresh = () => {
     if (!refreshing) {
+      triggerPageLoading(820);
       fetchStatus();
     }
   };

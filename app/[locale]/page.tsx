@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import ClientWrapper from '@/components/client-wrapper';
 import type { Language } from '@/lib/i18n';
 
@@ -31,7 +31,7 @@ export default async function LocalePage({
   const normalized = locale.toLowerCase() as Language;
 
   if (!SUPPORTED_LOCALES.includes(normalized)) {
-    redirect('/zh-cn');
+    notFound();
   }
 
   return <ClientWrapper initialLanguage={normalized} />;

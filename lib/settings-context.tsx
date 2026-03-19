@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { usePathname } from 'next/navigation';
 import { translations, Language, Translations } from './i18n';
 
@@ -12,6 +12,8 @@ interface SettingsContextType {
   setPrimaryHue: (hue: number) => void;
   isDark: boolean;
   setIsDark: (dark: boolean) => void;
+  isPageLoading: boolean;
+  triggerPageLoading: (durationMs?: number) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
@@ -134,8 +136,23 @@ export function SettingsProvider({
   const [language, setLanguageState] = useState<Language>(normalizeLanguage(initialLanguage));
   const [primaryHue, setPrimaryHueState] = useState(155);
   const [isDark, setIsDarkState] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const loadingTimerRef = useRef<number | null>(null);
+
+  const triggerPageLoading = (durationMs = 900) => {
+    if (typeof window === 'undefined') return;
+    if (loadingTimerRef.current !== null) {
+      window.clearTimeout(loadingTimerRef.current);
+    }
+    setIsPageLoading(true);
+    loadingTimerRef.current = window.setTimeout(() => {
+      setIsPageLoading(false);
+      loadingTimerRef.current = null;
+    }, Math.max(320, durationMs));
+  };
 
   useEffect(() => {
+    triggerPageLoading(1000);
     const routeLocale = pathname.split('/').filter(Boolean)[0];
     const savedLang = normalizeLanguage(localStorage.getItem('cgsbs-language'));
     const resolvedLanguage = normalizeLanguage(routeLocale ?? initialLanguage ?? savedLang ?? detectLanguage());
@@ -156,6 +173,14 @@ export function SettingsProvider({
   }, [initialLanguage, pathname]);
 
   useEffect(() => {
+    return () => {
+      if (loadingTimerRef.current !== null) {
+        window.clearTimeout(loadingTimerRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     applyTheme(isDark, primaryHue);
   }, [isDark, primaryHue]);
 
@@ -168,6 +193,7 @@ export function SettingsProvider({
 
   const setLanguage = (lang: Language) => {
     const normalized = normalizeLanguage(lang);
+    triggerPageLoading(980);
     setLanguageState(normalized);
     localStorage.setItem('cgsbs-language', normalized);
   };
@@ -177,6 +203,7 @@ export function SettingsProvider({
   };
 
   const setIsDark = (dark: boolean) => {
+    triggerPageLoading(760);
     setIsDarkState(dark);
     localStorage.setItem('cgsbs-dark', dark.toString());
   };
@@ -184,7 +211,19 @@ export function SettingsProvider({
   const t = translations[language];
 
   return (
-    <SettingsContext.Provider value={{ language, setLanguage, t, primaryHue, setPrimaryHue, isDark, setIsDark }}>
+    <SettingsContext.Provider
+      value={{
+        language,
+        setLanguage,
+        t,
+        primaryHue,
+        setPrimaryHue,
+        isDark,
+        setIsDark,
+        isPageLoading,
+        triggerPageLoading,
+      }}
+    >
       {children}
     </SettingsContext.Provider>
   );
