@@ -150,6 +150,19 @@ export default function ServerStatus() {
           {t.status.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span> | {t.status.autoRefresh} | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">{t.status.viewOnNameMC}</a>
         </p>
       </div>
+
+      <div className="mt-6 glass-strong rounded-xl p-4 border border-glass-border/70 animate-slide-up delay-300 transition-all duration-300 hover:border-primary/50">
+        <div className="rounded-lg overflow-hidden bg-foreground/5">
+          <iframe
+            style={{ width: '728px', height: '90px', maxWidth: '100%', border: 'none', display: 'block', margin: 'auto' }}
+            src="https://namemc.com/server/cgsbs.asia/embed"
+            width="728"
+            height="90"
+            loading="lazy"
+            title="NameMC server banner for cgsbs.asia"
+          />
+        </div>
+      </div>
     </section>
   );
 }
