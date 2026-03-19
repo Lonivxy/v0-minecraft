@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Radio, Users, Server, RefreshCw } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 
@@ -21,6 +21,8 @@ export default function ServerStatus() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const { t, triggerPageLoading, isDark } = useSettings();
 
   const fetchStatus = async () => {
@@ -45,6 +47,21 @@ export default function ServerStatus() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.15 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const handleRefresh = () => {
     if (!refreshing) {
       triggerPageLoading(820);
@@ -54,7 +71,7 @@ export default function ServerStatus() {
 
   if (loading) {
     return (
-      <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <section ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-12 text-center">
           {t.status.title}
         </h2>
@@ -75,7 +92,7 @@ export default function ServerStatus() {
   const version = status?.version ?? '1.20.4';
 
   return (
-    <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <section ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-center gap-4 mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground text-center">
           {t.status.title}
@@ -92,7 +109,7 @@ export default function ServerStatus() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Online Status */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up will-change-transform">
+        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.serverStatus}</h3>
             <div className={`p-3 rounded-lg transition-all duration-300 group-hover:scale-110 ${isOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
@@ -108,7 +125,7 @@ export default function ServerStatus() {
         </div>
 
         {/* Players */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-100 will-change-transform">
+        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up delay-100' : 'opacity-0'}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.onlinePlayers}</h3>
             <div className="p-3 rounded-lg bg-primary/20 transition-all duration-300 group-hover:scale-110">
@@ -132,7 +149,7 @@ export default function ServerStatus() {
         </div>
 
         {/* Version */}
-        <div className="glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group animate-slide-up delay-200 will-change-transform">
+        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up delay-200' : 'opacity-0'}`}>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.gameVersion}</h3>
             <div className="p-3 rounded-lg bg-cyan-500/20 transition-all duration-300 group-hover:scale-110">
@@ -145,14 +162,14 @@ export default function ServerStatus() {
       </div>
 
       {/* Display IP hint with NameMC link */}
-      <div className="mt-8 glass rounded-lg p-4 border border-glass-border/50 animate-slide-up delay-300">
+      <div className={`mt-8 glass rounded-lg p-4 border border-glass-border/50 ${isVisible ? 'animate-slide-up delay-300' : 'opacity-0'}`}>
         <p className="text-xs text-foreground/60 text-center">
           {t.status.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span> | {t.status.autoRefresh} | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">{t.status.viewOnNameMC}</a>
         </p>
       </div>
 
       <div
-        className={`mt-6 rounded-xl p-4 animate-slide-up delay-300 transition-all duration-300 ${
+        className={`mt-6 rounded-xl p-4 transition-all duration-300 ${isVisible ? 'animate-slide-up delay-300' : 'opacity-0'} ${
           isDark
             ? 'border border-black/80 bg-black hover:border-primary/60'
             : 'border border-zinc-300/80 shadow-lg shadow-zinc-400/35 hover:border-zinc-500/80'
