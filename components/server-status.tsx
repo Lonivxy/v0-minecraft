@@ -22,7 +22,9 @@ export default function ServerStatus() {
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const sectionRef = useRef<HTMLElement>(null);
+  const lastScrollYRef = useRef(0);
   const { t, triggerPageLoading, isDark } = useSettings();
 
   const fetchStatus = async () => {
@@ -48,6 +50,22 @@ export default function ServerStatus() {
   }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    lastScrollYRef.current = window.scrollY;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollYRef.current;
+      if (Math.abs(delta) > 2) {
+        setScrollDirection(delta > 0 ? 'down' : 'up');
+        lastScrollYRef.current = currentY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
@@ -67,6 +85,11 @@ export default function ServerStatus() {
       triggerPageLoading(820);
       fetchStatus();
     }
+  };
+
+  const sectionDelay = (index: number, total: number, step = 100) => {
+    const order = scrollDirection === 'down' ? index : total - 1 - index;
+    return `${order * step}ms`;
   };
 
   if (loading) {
@@ -109,7 +132,10 @@ export default function ServerStatus() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Online Status */}
-        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
+        <div
+          className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+          style={{ animationDelay: sectionDelay(0, 3) }}
+        >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.serverStatus}</h3>
             <div className={`p-3 rounded-lg transition-all duration-300 group-hover:scale-110 ${isOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
@@ -125,7 +151,10 @@ export default function ServerStatus() {
         </div>
 
         {/* Players */}
-        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up delay-100' : 'opacity-0'}`}>
+        <div
+          className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+          style={{ animationDelay: sectionDelay(1, 3) }}
+        >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.onlinePlayers}</h3>
             <div className="p-3 rounded-lg bg-primary/20 transition-all duration-300 group-hover:scale-110">
@@ -149,7 +178,10 @@ export default function ServerStatus() {
         </div>
 
         {/* Version */}
-        <div className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up delay-200' : 'opacity-0'}`}>
+        <div
+          className={`glass-strong rounded-xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-2 cursor-pointer group will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+          style={{ animationDelay: sectionDelay(2, 3) }}
+        >
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">{t.status.gameVersion}</h3>
             <div className="p-3 rounded-lg bg-cyan-500/20 transition-all duration-300 group-hover:scale-110">
@@ -162,25 +194,29 @@ export default function ServerStatus() {
       </div>
 
       {/* Display IP hint with NameMC link */}
-      <div className={`mt-8 glass rounded-lg p-4 border border-glass-border/50 ${isVisible ? 'animate-slide-up delay-300' : 'opacity-0'}`}>
+      <div
+        className={`mt-8 glass rounded-lg p-4 border border-glass-border/50 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+        style={{ animationDelay: scrollDirection === 'down' ? '300ms' : '120ms' }}
+      >
         <p className="text-xs text-foreground/60 text-center">
           {t.status.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span> | {t.status.autoRefresh} | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">{t.status.viewOnNameMC}</a>
         </p>
       </div>
 
       <div
-        className={`mt-6 rounded-xl p-4 transition-all duration-300 ${isVisible ? 'animate-slide-up delay-300' : 'opacity-0'} ${
+        className={`mt-6 rounded-xl p-4 transition-all duration-300 ${isVisible ? 'animate-slide-up' : 'opacity-0'} ${
           isDark
             ? 'border border-black/80 bg-black hover:border-primary/60'
             : 'border border-zinc-300/80 shadow-lg shadow-zinc-400/35 hover:border-zinc-500/80'
         }`}
-        style={
-          isDark
-            ? undefined
+        style={{
+          animationDelay: scrollDirection === 'down' ? '380ms' : '0ms',
+          ...(isDark
+            ? {}
             : {
                 background: 'radial-gradient(circle at center, rgb(9 9 11) 0%, rgb(82 82 91) 38%, rgb(250 250 250) 100%)',
-              }
-        }
+              }),
+        }}
       >
         <div className={`rounded-lg overflow-hidden ${isDark ? 'bg-black' : 'bg-zinc-900/95'}`}>
           <iframe

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Eye, Zap, Gamepad2, ExternalLink } from 'lucide-react';
+import { Eye, Zap, Gamepad2, ExternalLink, ChevronDown } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 import type { Language } from '@/lib/i18n';
 
@@ -25,9 +25,16 @@ type UILanguage =
   | 'hi';
 
 type LauncherId = 'pcl2' | 'pclce' | 'hmcl' | 'atlauncher' | 'prism' | 'lunar';
+type ResourceId = 'modrinth' | 'curseforge' | 'minecraft' | 'minecraftWiki' | 'planetMinecraft' | 'namemc' | 'fabric' | 'forge';
 
 interface LauncherItem {
   id: LauncherId;
+  name: string;
+  url: string;
+}
+
+interface ResourceItem {
+  id: ResourceId;
   name: string;
   url: string;
 }
@@ -274,13 +281,306 @@ const launchers: LauncherItem[] = [
   { id: 'lunar', name: 'Lunar Client', url: 'https://www.lunarclient.com/download' },
 ];
 
+const resourceSectionCopy: Record<UILanguage, { title: string; subtitle: string; toggle: string; openLink: string }> = {
+  'zh-cn': {
+    title: '更多 MC 相关网站',
+    subtitle: '模组、整合包、官方资讯和社区工具都在这里。',
+    toggle: '展开 / 收起',
+    openLink: '打开链接',
+  },
+  'zh-hant': {
+    title: '更多 MC 相關網站',
+    subtitle: '模組、整合包、官方資訊與社群工具都在這裡。',
+    toggle: '展開 / 收合',
+    openLink: '開啟連結',
+  },
+  'zh-hk': {
+    title: '更多 MC 相關網站',
+    subtitle: '模組、整合包、官方資訊同社群工具都喺呢度。',
+    toggle: '展開 / 收起',
+    openLink: '開啟連結',
+  },
+  'zh-tw': {
+    title: '更多 MC 相關網站',
+    subtitle: '模組、整合包、官方資訊與社群工具都在這裡。',
+    toggle: '展開 / 收合',
+    openLink: '開啟連結',
+  },
+  'en-us': {
+    title: 'More Minecraft Websites',
+    subtitle: 'Mod platforms, official resources, and community tools in one place.',
+    toggle: 'Expand / Collapse',
+    openLink: 'Open Link',
+  },
+  'en-gb': {
+    title: 'More Minecraft Websites',
+    subtitle: 'Mod platforms, official resources, and community tools in one place.',
+    toggle: 'Expand / Collapse',
+    openLink: 'Open Link',
+  },
+  ja: {
+    title: 'MC 関連サイト',
+    subtitle: 'Mod 配布、公式情報、コミュニティ系サイトをまとめています。',
+    toggle: '開く / 閉じる',
+    openLink: 'リンクを開く',
+  },
+  fr: {
+    title: 'Autres sites Minecraft',
+    subtitle: 'Plateformes de mods, ressources officielles et outils communautaires.',
+    toggle: 'Ouvrir / Fermer',
+    openLink: 'Ouvrir le lien',
+  },
+  de: {
+    title: 'Weitere Minecraft-Seiten',
+    subtitle: 'Mod-Plattformen, offizielle Ressourcen und Community-Tools an einem Ort.',
+    toggle: 'Auf / Zu',
+    openLink: 'Link oeffnen',
+  },
+  nl: {
+    title: 'Meer Minecraft-websites',
+    subtitle: 'Modplatforms, officiele bronnen en communitytools op een plek.',
+    toggle: 'Open / Sluit',
+    openLink: 'Link openen',
+  },
+  pl: {
+    title: 'Wiecej stron Minecraft',
+    subtitle: 'Platformy modow, oficjalne zasoby i narzedzia spolecznosci w jednym miejscu.',
+    toggle: 'Rozwin / Zwin',
+    openLink: 'Otworz link',
+  },
+  bo: {
+    title: 'MC དྲ་ཚིགས་གཞན་དག',
+    subtitle: 'mod སྟེགས་བུ་དང་དངོས་མའི་གནས་ཚུལ། སྤྱི་ཚོགས་ལག་ཆ་རྣམས་འདིར་ཡོད།',
+    toggle: 'ཕྱེ / བསྡུ',
+    openLink: 'སྦྲེལ་མཐུད་འབྱེད',
+  },
+  ko: {
+    title: '추가 MC 사이트',
+    subtitle: '모드 플랫폼, 공식 자료, 커뮤니티 도구를 한곳에 모았습니다.',
+    toggle: '열기 / 닫기',
+    openLink: '링크 열기',
+  },
+  ar: {
+    title: 'مواقع ماينكرافت اضافية',
+    subtitle: 'منصات مودات ومصادر رسمية وادوات مجتمع في مكان واحد.',
+    toggle: 'توسيع / طي',
+    openLink: 'فتح الرابط',
+  },
+  th: {
+    title: 'เว็บไซต์ Minecraft เพิ่มเติม',
+    subtitle: 'รวมแพลตฟอร์มม็อด แหล่งข้อมูลทางการ และเครื่องมือชุมชนไว้ที่เดียว',
+    toggle: 'ขยาย / ย่อ',
+    openLink: 'เปิดลิงก์',
+  },
+  ru: {
+    title: 'Другие сайты Minecraft',
+    subtitle: 'Платформы модов, официальные ресурсы и инструменты сообщества в одном месте.',
+    toggle: 'Открыть / Скрыть',
+    openLink: 'Открыть ссылку',
+  },
+  hi: {
+    title: 'अन्य Minecraft वेबसाइटें',
+    subtitle: 'मॉड प्लेटफॉर्म, आधिकारिक संसाधन और कम्युनिटी टूल एक ही जगह।',
+    toggle: 'खोलें / बंद करें',
+    openLink: 'लिंक खोलें',
+  },
+};
+
+const resourceDescriptions: Record<UILanguage, Record<ResourceId, string>> = {
+  'zh-cn': {
+    modrinth: '现代化模组与整合包平台，下载体验简洁快速。',
+    curseforge: '主流模组与整合包分发平台，内容覆盖广。',
+    minecraft: 'Minecraft 官方网站，新闻、下载与账号服务入口。',
+    minecraftWiki: '社区维护的 Minecraft Wiki，适合查玩法与机制。',
+    planetMinecraft: '地图、皮肤与作品分享社区，创作内容丰富。',
+    namemc: '查询皮肤、用户名与服务器信息的实用站点。',
+    fabric: 'Fabric 模组加载器官网，轻量且更新快。',
+    forge: 'Minecraft Forge 官网，经典模组生态核心平台。',
+  },
+  'zh-hant': {
+    modrinth: '現代化模組與整合包平台，下載體驗簡潔快速。',
+    curseforge: '主流模組與整合包分發平台，內容覆蓋廣。',
+    minecraft: 'Minecraft 官方網站，新聞、下載與帳號服務入口。',
+    minecraftWiki: '社群維護的 Minecraft Wiki，適合查玩法與機制。',
+    planetMinecraft: '地圖、皮膚與作品分享社群，創作內容豐富。',
+    namemc: '查詢皮膚、使用者名稱與伺服器資訊的實用網站。',
+    fabric: 'Fabric 模組載入器官網，輕量且更新快。',
+    forge: 'Minecraft Forge 官網，經典模組生態核心平台。',
+  },
+  'zh-hk': {
+    modrinth: '現代化模組同整合包平台，下載體驗簡潔快捷。',
+    curseforge: '主流模組同整合包分發平台，內容覆蓋廣。',
+    minecraft: 'Minecraft 官方網站，新聞、下載同帳號服務入口。',
+    minecraftWiki: '社群維護嘅 Minecraft Wiki，適合查玩法同機制。',
+    planetMinecraft: '地圖、皮膚同作品分享社群，創作內容豐富。',
+    namemc: '查皮膚、用戶名同伺服器資訊嘅實用網站。',
+    fabric: 'Fabric 模組載入器官網，輕量而且更新快。',
+    forge: 'Minecraft Forge 官網，經典模組生態核心平台。',
+  },
+  'zh-tw': {
+    modrinth: '現代化模組與整合包平台，下載體驗簡潔快速。',
+    curseforge: '主流模組與整合包分發平台，內容覆蓋廣。',
+    minecraft: 'Minecraft 官方網站，新聞、下載與帳號服務入口。',
+    minecraftWiki: '社群維護的 Minecraft Wiki，適合查玩法與機制。',
+    planetMinecraft: '地圖、皮膚與作品分享社群，創作內容豐富。',
+    namemc: '查詢皮膚、使用者名稱與伺服器資訊的實用網站。',
+    fabric: 'Fabric 模組載入器官網，輕量且更新快。',
+    forge: 'Minecraft Forge 官網，經典模組生態核心平台。',
+  },
+  'en-us': {
+    modrinth: 'Modern mod and modpack platform with a clean download experience.',
+    curseforge: 'Mainstream distribution platform for Minecraft mods and modpacks.',
+    minecraft: 'Official Minecraft website for news, downloads, and account services.',
+    minecraftWiki: 'Community-maintained Minecraft Wiki for mechanics and guides.',
+    planetMinecraft: 'Creative sharing hub for maps, skins, builds, and showcases.',
+    namemc: 'Useful tool for skin, username, and server profile lookup.',
+    fabric: 'Official Fabric website, lightweight loader with fast updates.',
+    forge: 'Official Minecraft Forge website, core platform of classic modding.',
+  },
+  'en-gb': {
+    modrinth: 'Modern mod and modpack platform with a clean download experience.',
+    curseforge: 'Mainstream distribution platform for Minecraft mods and modpacks.',
+    minecraft: 'Official Minecraft website for news, downloads, and account services.',
+    minecraftWiki: 'Community-maintained Minecraft Wiki for mechanics and guides.',
+    planetMinecraft: 'Creative sharing hub for maps, skins, builds, and showcases.',
+    namemc: 'Useful tool for skin, username, and server profile lookup.',
+    fabric: 'Official Fabric website, lightweight loader with fast updates.',
+    forge: 'Official Minecraft Forge website, core platform of classic modding.',
+  },
+  ja: {
+    modrinth: 'モダンな Mod / Modpack 配布サイト。軽快で見やすいです。',
+    curseforge: '定番の Mod / Modpack 配布プラットフォームです。',
+    minecraft: 'Minecraft 公式サイト。ニュースやダウンロード情報はこちら。',
+    minecraftWiki: 'コミュニティ運営の Minecraft Wiki。仕様確認に便利です。',
+    planetMinecraft: 'マップやスキンなどの作品共有コミュニティです。',
+    namemc: 'スキン、ユーザー名、サーバー情報を確認できるサイトです。',
+    fabric: 'Fabric 公式サイト。軽量で更新が速いローダーです。',
+    forge: 'Minecraft Forge 公式サイト。定番 Mod 環境の中心です。',
+  },
+  fr: {
+    modrinth: 'Plateforme moderne de mods et modpacks, simple et rapide.',
+    curseforge: 'Plateforme majeure pour les mods et modpacks Minecraft.',
+    minecraft: 'Site officiel de Minecraft: actus, telechargements et comptes.',
+    minecraftWiki: 'Wiki Minecraft maintenu par la communaute pour les mecaniques.',
+    planetMinecraft: 'Communaute de partage pour cartes, skins et creations.',
+    namemc: 'Outil pratique pour skins, pseudos et infos de serveurs.',
+    fabric: 'Site officiel de Fabric, loader leger et tres reactif.',
+    forge: 'Site officiel de Minecraft Forge, base historique du modding.',
+  },
+  de: {
+    modrinth: 'Moderne Plattform fuer Mods und Modpacks mit klarer Bedienung.',
+    curseforge: 'Grosse Standard-Plattform fuer Minecraft-Mods und Modpacks.',
+    minecraft: 'Offizielle Minecraft-Seite fuer News, Downloads und Accounts.',
+    minecraftWiki: 'Community-gepflegtes Minecraft-Wiki fuer Mechaniken und Infos.',
+    planetMinecraft: 'Community fuer Maps, Skins und kreative Projekte.',
+    namemc: 'Nutzliches Tool fuer Skins, Namen und Server-Profile.',
+    fabric: 'Offizielle Fabric-Seite, leichter Loader mit schnellen Updates.',
+    forge: 'Offizielle Forge-Seite, klassisches Zentrum des Moddings.',
+  },
+  nl: {
+    modrinth: 'Moderne mod- en modpacksite met een snelle en duidelijke ervaring.',
+    curseforge: 'Groot platform voor Minecraft-mods en modpacks.',
+    minecraft: 'Officiele Minecraft-site voor nieuws, downloads en accounts.',
+    minecraftWiki: 'Door de community beheerde Minecraft Wiki voor uitleg en data.',
+    planetMinecraft: 'Community voor het delen van maps, skins en creaties.',
+    namemc: 'Handige site voor skins, gebruikersnamen en serverinformatie.',
+    fabric: 'Officiele Fabric-site, lichte loader met snelle updates.',
+    forge: 'Officiele Forge-site, klassiek platform voor modding.',
+  },
+  pl: {
+    modrinth: 'Nowoczesna platforma modow i modpackow z przejrzystym pobieraniem.',
+    curseforge: 'Popularna platforma dystrybucji modow i modpackow Minecraft.',
+    minecraft: 'Oficjalna strona Minecraft: aktualnosci, pobieranie i konto.',
+    minecraftWiki: 'Wiki Minecraft tworzone przez spolecznosc, dobre do sprawdzania mechanik.',
+    planetMinecraft: 'Spolecznosc udostepniajaca mapy, skorki i projekty.',
+    namemc: 'Przydatne narzedzie do skinow, nazw i danych serwerow.',
+    fabric: 'Oficjalna strona Fabric, lekki loader z szybkim rozwojem.',
+    forge: 'Oficjalna strona Forge, klasyczny filar modowania Minecraft.',
+  },
+  bo: {
+    modrinth: 'mod དང modpack གི་དེང་རབས་སྟེགས་བུ། ཕབ་ལེན་སླ་པོ་ཡོད།',
+    curseforge: 'Minecraft mod དང modpack གི་སྒྲིག་སྟེགས་གྲགས་ཆེན།',
+    minecraft: 'Minecraft དངོས་མའི་དྲ་ཚིགས། གསར་འགྱུར་དང་ཕབ་ལེན་ལ་ཕན།',
+    minecraftWiki: 'སྤྱི་ཚོགས་ནས་བཟོས་པའི Minecraft Wiki གནས་ཚུལ་ཞིབ་ཕྲ།',
+    planetMinecraft: 'ས་ཁྲ་དང་ skin སོགས་བསྐྱར་སྤེལ་བྱེད་པའི་སྤྱི་ཚོགས།',
+    namemc: 'skin དང་མིང་། server གནས་ཚུལ་འཚོལ་བའི་ལག་ཆ།',
+    fabric: 'Fabric དངོས་མའི་དྲ་ཚིགས། loader ཡང་བ་དང་གསར་སྒྱུར་མྱུར།',
+    forge: 'Forge དངོས་མའི་དྲ་ཚིགས། modding གི་གཞི་རྩ་གཙོ་བོ།',
+  },
+  ko: {
+    modrinth: '모드와 모드팩을 편하게 찾을 수 있는 현대적인 플랫폼입니다.',
+    curseforge: 'Minecraft 모드와 모드팩 배포에서 가장 널리 쓰이는 플랫폼입니다.',
+    minecraft: 'Minecraft 공식 사이트로 뉴스, 다운로드, 계정 정보를 제공합니다.',
+    minecraftWiki: '커뮤니티가 운영하는 Minecraft Wiki로 시스템 확인에 좋습니다.',
+    planetMinecraft: '맵, 스킨, 빌드 작품을 공유하는 대표 커뮤니티입니다.',
+    namemc: '스킨, 닉네임, 서버 정보를 조회하기 좋은 유틸 사이트입니다.',
+    fabric: 'Fabric 공식 사이트로 경량 모드 로더와 문서를 제공합니다.',
+    forge: 'Forge 공식 사이트로 전통적인 모드 생태계의 핵심입니다.',
+  },
+  ar: {
+    modrinth: 'منصة حديثة للمودات وحزم المودات مع تجربة تحميل سهلة.',
+    curseforge: 'منصة رئيسية لتوزيع مودات وحزم مودات ماينكرافت.',
+    minecraft: 'الموقع الرسمي لماينكرافت للاخبار والتنزيلات وخدمات الحساب.',
+    minecraftWiki: 'ويكي ماينكرافت يديره المجتمع لشرح الميكانيكيات.',
+    planetMinecraft: 'مجتمع لمشاركة الخرائط والسكنات والاعمال الابداعية.',
+    namemc: 'اداة مفيدة للبحث عن السكنات والاسماء ومعلومات السيرفرات.',
+    fabric: 'الموقع الرسمي لـ Fabric، لودر خفيف بتحديثات سريعة.',
+    forge: 'الموقع الرسمي لـ Forge، منصة كلاسيكية مهمة للمودات.',
+  },
+  th: {
+    modrinth: 'แพลตฟอร์มม็อดและม็อดแพ็กสมัยใหม่ ใช้งานง่ายและดาวน์โหลดสะดวก',
+    curseforge: 'แพลตฟอร์มหลักสำหรับม็อดและม็อดแพ็กของ Minecraft',
+    minecraft: 'เว็บไซต์ทางการของ Minecraft สำหรับข่าว ดาวน์โหลด และบัญชีผู้ใช้',
+    minecraftWiki: 'Minecraft Wiki ที่ดูแลโดยชุมชน เหมาะสำหรับค้นหากลไกเกม',
+    planetMinecraft: 'ชุมชนแชร์แผนที่ สกิน และผลงานสร้างสรรค์ต่างๆ',
+    namemc: 'เครื่องมือดูสกิน ชื่อผู้เล่น และข้อมูลเซิร์ฟเวอร์',
+    fabric: 'เว็บไซต์ทางการของ Fabric ตัวโหลดม็อดที่เบาและอัปเดตไว',
+    forge: 'เว็บไซต์ทางการของ Forge แกนหลักของระบบม็อดแบบดั้งเดิม',
+  },
+  ru: {
+    modrinth: 'Современная платформа модов и модпаков с удобной загрузкой.',
+    curseforge: 'Крупная платформа распространения модов и модпаков Minecraft.',
+    minecraft: 'Официальный сайт Minecraft: новости, загрузки и аккаунт.',
+    minecraftWiki: 'Minecraft Wiki от сообщества для механик и справки.',
+    planetMinecraft: 'Сообщество для обмена картами, скинами и проектами.',
+    namemc: 'Удобный сервис для проверки скинов, ников и серверов.',
+    fabric: 'Официальный сайт Fabric, легкий загрузчик с быстрыми обновлениями.',
+    forge: 'Официальный сайт Forge, классическая основа моддинга Minecraft.',
+  },
+  hi: {
+    modrinth: 'आधुनिक मॉड और मॉडपैक प्लेटफॉर्म, साफ और तेज डाउनलोड अनुभव के साथ।',
+    curseforge: 'Minecraft मॉड और मॉडपैक के लिए प्रमुख वितरण प्लेटफॉर्म।',
+    minecraft: 'Minecraft की आधिकारिक वेबसाइट: समाचार, डाउनलोड और अकाउंट सेवाएं।',
+    minecraftWiki: 'समुदाय द्वारा संचालित Minecraft Wiki, गेम मैकेनिक्स समझने के लिए उपयोगी।',
+    planetMinecraft: 'मैप, स्किन और क्रिएटिव प्रोजेक्ट साझा करने वाला समुदाय मंच।',
+    namemc: 'स्किन, यूज़रनेम और सर्वर जानकारी देखने का उपयोगी टूल।',
+    fabric: 'Fabric की आधिकारिक साइट, हल्का और तेज अपडेट वाला मॉड लोडर।',
+    forge: 'Forge की आधिकारिक साइट, पारंपरिक मॉडिंग इकोसिस्टम का मुख्य आधार।',
+  },
+};
+
+const resources: ResourceItem[] = [
+  { id: 'modrinth', name: 'Modrinth', url: 'https://modrinth.com/' },
+  { id: 'curseforge', name: 'CurseForge', url: 'https://www.curseforge.com/minecraft' },
+  { id: 'minecraft', name: 'Minecraft Official', url: 'https://www.minecraft.net/' },
+  { id: 'minecraftWiki', name: 'Minecraft Wiki', url: 'https://minecraft.wiki/' },
+  { id: 'planetMinecraft', name: 'Planet Minecraft', url: 'https://www.planetminecraft.com/' },
+  { id: 'namemc', name: 'NameMC', url: 'https://namemc.com/' },
+  { id: 'fabric', name: 'Fabric', url: 'https://fabricmc.net/' },
+  { id: 'forge', name: 'Minecraft Forge', url: 'https://files.minecraftforge.net/net/minecraftforge/forge/' },
+];
+
 export default function FeaturesSection() {
   const [isVisible, setIsVisible] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('down');
   const sectionRef = useRef<HTMLElement>(null);
+  const lastScrollYRef = useRef(0);
   const { t, language } = useSettings();
   const uiLanguage = normalizeUILanguage(language);
   const sectionCopy = launcherSectionCopy[uiLanguage];
   const descriptions = launcherDescriptions[uiLanguage];
+  const resourceCopy = resourceSectionCopy[uiLanguage];
+  const resourceTexts = resourceDescriptions[uiLanguage];
 
   const features = [
     {
@@ -311,6 +611,22 @@ export default function FeaturesSection() {
   ];
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    lastScrollYRef.current = window.scrollY;
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      const delta = currentY - lastScrollYRef.current;
+      if (Math.abs(delta) > 2) {
+        setScrollDirection(delta > 0 ? 'down' : 'up');
+        lastScrollYRef.current = currentY;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         setIsVisible(entry.isIntersecting);
@@ -325,10 +641,28 @@ export default function FeaturesSection() {
     return () => observer.disconnect();
   }, []);
 
+  const featureDelay = (index: number) => {
+    const order = scrollDirection === 'down' ? index : features.length - 1 - index;
+    return `${order * 150}ms`;
+  };
+
+  const launcherDelay = (index: number) => {
+    const order = scrollDirection === 'down' ? index : launchers.length - 1 - index;
+    return `${order * 80}ms`;
+  };
+
+  const resourceDelay = (index: number) => {
+    const order = scrollDirection === 'down' ? index : resources.length - 1 - index;
+    return `${order * 70}ms`;
+  };
+
   return (
     <section ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-7xl mx-auto">
-        <div className={`text-center mb-16 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}>
+        <div
+          className={`text-center mb-16 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+          style={{ animationDelay: scrollDirection === 'down' ? '0ms' : '220ms' }}
+        >
           <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-4 text-balance">
             {t.features.title} <span className="animate-title-gradient inline-block">CGSBS</span>
           </h2>
@@ -344,7 +678,7 @@ export default function FeaturesSection() {
               <div
                 key={index}
                 className={`glass-strong rounded-2xl p-8 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-105 hover:-translate-y-3 hover:shadow-2xl hover:shadow-primary/10 group cursor-pointer will-change-transform ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
-                style={{ animationDelay: `${index * 150}ms` }}
+                style={{ animationDelay: featureDelay(index) }}
               >
                 <div className={`w-16 h-16 rounded-xl ${feature.iconBg} flex items-center justify-center mb-6 group-hover:scale-110 transition-all duration-300`}>
                   <Icon className={`w-8 h-8 ${feature.iconColor}`} />
@@ -377,7 +711,7 @@ export default function FeaturesSection() {
         <div
           id="launchers"
           className={`mt-20 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
-          style={{ animationDelay: '300ms' }}
+          style={{ animationDelay: scrollDirection === 'down' ? '300ms' : '80ms' }}
         >
           <div className="text-center mb-8">
             <h3 className="text-3xl sm:text-4xl font-bold text-foreground mb-3">
@@ -393,7 +727,7 @@ export default function FeaturesSection() {
               <article
                 key={launcher.name}
                 className="glass-strong rounded-2xl p-6 border border-glass-border hover:border-primary/50 transition-all duration-500 hover:scale-[1.02] hover:-translate-y-1"
-                style={{ animationDelay: `${index * 80}ms` }}
+                style={{ animationDelay: launcherDelay(index) }}
               >
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <h4 className="text-xl font-bold text-foreground">{launcher.name}</h4>
@@ -422,6 +756,58 @@ export default function FeaturesSection() {
             ))}
           </div>
         </div>
+
+        <details
+          className={`mt-8 glass-strong rounded-2xl border border-glass-border overflow-hidden ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+          style={{ animationDelay: scrollDirection === 'down' ? '520ms' : '0ms' }}
+        >
+          <summary className="list-none cursor-pointer select-none px-6 py-5 flex items-center justify-between gap-4 hover:bg-primary/10 transition-colors">
+            <div className="text-left">
+              <h3 className="text-2xl font-bold text-foreground">{resourceCopy.title}</h3>
+              <p className="text-sm text-foreground/70 mt-1">{resourceCopy.subtitle}</p>
+            </div>
+            <div className="inline-flex items-center gap-2 text-sm text-foreground/70">
+              <span>{resourceCopy.toggle}</span>
+              <ChevronDown className="w-4 h-4" />
+            </div>
+          </summary>
+
+          <div className="px-6 pb-6 pt-2 border-t border-glass-border/60">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {resources.map((resource, index) => (
+                <article
+                  key={resource.name}
+                  className={`glass rounded-xl p-5 border border-glass-border hover:border-primary/50 transition-all duration-300 hover:scale-[1.01] hover:-translate-y-1 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}
+                  style={{ animationDelay: resourceDelay(index) }}
+                >
+                  <div className="flex items-center justify-between gap-3 mb-2">
+                    <h4 className="text-lg font-semibold text-foreground">{resource.name}</h4>
+                    <a
+                      href={resource.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm text-primary hover:text-cyan-400 transition-colors"
+                    >
+                      {resourceCopy.openLink}
+                      <ExternalLink className="w-4 h-4" />
+                    </a>
+                  </div>
+                  <p className="text-sm text-foreground/75 leading-relaxed">
+                    {resourceTexts[resource.id]}
+                  </p>
+                  <a
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex mt-3 text-xs sm:text-sm text-foreground/70 hover:text-primary underline underline-offset-4 break-all transition-colors"
+                  >
+                    {resource.url}
+                  </a>
+                </article>
+              ))}
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   );
