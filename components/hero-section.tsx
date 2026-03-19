@@ -203,10 +203,13 @@ export default function HeroSection() {
         </div>
 
         {/* Server Info Card */}
-        <div className="glass-strong rounded-2xl p-6 border border-glass-border max-w-md mx-auto animate-slide-up delay-500 hover:border-primary/50 transition-all duration-300 hover:scale-[1.02] will-change-transform">
-          <p className="text-foreground/60 text-sm mb-2">{t.hero.serverAddress}</p>
-          <p className="text-2xl font-mono font-bold text-primary mb-1">{serverIP}</p>
-          <p className="text-foreground/50 text-xs">{t.hero.version}</p>
+        <div className="liquid-glass-card max-w-md mx-auto animate-slide-up delay-500 transition-all duration-300 hover:scale-[1.02] will-change-transform">
+          <div className="liquid-glass-marquee" aria-hidden="true" />
+          <div className="liquid-glass-core p-6">
+            <p className="text-foreground/60 text-sm mb-2">{t.hero.serverAddress}</p>
+            <p className="text-2xl font-mono font-bold text-primary mb-1">{serverIP}</p>
+            <p className="text-foreground/50 text-xs">{t.hero.version}</p>
+          </div>
         </div>
       </div>
     </section>
