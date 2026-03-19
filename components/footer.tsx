@@ -82,7 +82,7 @@ export default function Footer() {
               <div className="space-y-3">
                 {/* QQ Group */}
                 <a
-                  href="https://qm.qq.com/cgi-bin/qm/qr?k=placeholder&jump_from=webapi"
+                  href="http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=FcZXLF7pqzNXVWA5no0dY2WP3WBIEXM0&authKey=Ulo4kzTaY4NQP9mwdEUx9JV6FDQc7r8VfK93Iv8puG29SMjb57bc%2FICGJ7JSjhI5&noverify=0&group_code=712839418"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 glass rounded-xl border border-glass-border hover:border-primary/50 hover:bg-primary/10 transition-all duration-300 hover:scale-105 hover:-translate-y-1 group will-change-transform"
