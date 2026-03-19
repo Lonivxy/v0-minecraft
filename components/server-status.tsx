@@ -151,8 +151,8 @@ export default function ServerStatus() {
         </p>
       </div>
 
-      <div className="mt-6 glass-strong rounded-xl p-4 border border-glass-border/70 animate-slide-up delay-300 transition-all duration-300 hover:border-primary/50">
-        <div className="rounded-lg overflow-hidden bg-foreground/5">
+      <div className="mt-6 rounded-xl p-4 border border-black/80 bg-black animate-slide-up delay-300 transition-all duration-300 hover:border-primary/60">
+        <div className="rounded-lg overflow-hidden bg-black">
           <iframe
             style={{ width: '728px', height: '90px', maxWidth: '100%', border: 'none', display: 'block', margin: 'auto' }}
             src="https://namemc.com/server/cgsbs.asia/embed"
