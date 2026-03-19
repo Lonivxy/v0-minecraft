@@ -21,7 +21,7 @@ export default function ServerStatus() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const { t, triggerPageLoading } = useSettings();
+  const { t, triggerPageLoading, isDark } = useSettings();
 
   const fetchStatus = async () => {
     try {
@@ -151,8 +151,21 @@ export default function ServerStatus() {
         </p>
       </div>
 
-      <div className="mt-6 rounded-xl p-4 border border-black/80 bg-black animate-slide-up delay-300 transition-all duration-300 hover:border-primary/60">
-        <div className="rounded-lg overflow-hidden bg-black">
+      <div
+        className={`mt-6 rounded-xl p-4 animate-slide-up delay-300 transition-all duration-300 ${
+          isDark
+            ? 'border border-black/80 bg-black hover:border-primary/60'
+            : 'border border-zinc-300/80 shadow-lg shadow-zinc-400/35 hover:border-zinc-500/80'
+        }`}
+        style={
+          isDark
+            ? undefined
+            : {
+                background: 'radial-gradient(circle at center, rgb(9 9 11) 0%, rgb(82 82 91) 38%, rgb(250 250 250) 100%)',
+              }
+        }
+      >
+        <div className={`rounded-lg overflow-hidden ${isDark ? 'bg-black' : 'bg-zinc-900/95'}`}>
           <iframe
             style={{ width: '728px', height: '90px', maxWidth: '100%', border: 'none', display: 'block', margin: 'auto' }}
             src="https://namemc.com/server/cgsbs.asia/embed"
