@@ -29,11 +29,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const enableVercelAnalytics = process.env.VERCEL === '1'
+
   return (
     <html lang="zh-CN">
       <body className="font-sans antialiased">
         {children}
-        <Analytics />
+        {enableVercelAnalytics ? <Analytics /> : null}
       </body>
     </html>
   )

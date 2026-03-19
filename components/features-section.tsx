@@ -25,7 +25,7 @@ type UILanguage =
   | 'hi';
 
 type LauncherId = 'pcl2' | 'pclce' | 'hmcl' | 'atlauncher' | 'prism' | 'lunar';
-type ResourceId = 'modrinth' | 'curseforge' | 'minecraft' | 'minecraftWiki' | 'planetMinecraft' | 'namemc' | 'fabric' | 'forge';
+type ResourceId = 'modrinth' | 'curseforge' | 'minecraft' | 'minecraftWiki' | 'planetMinecraft' | 'namemc' | 'fabric' | 'forge' | 'tlauncher';
 
 interface LauncherItem {
   id: LauncherId;
@@ -278,7 +278,6 @@ const launchers: LauncherItem[] = [
   { id: 'hmcl', name: 'HMCL', url: 'https://hmcl.huangyuhui.net/download/' },
   { id: 'atlauncher', name: 'ATLauncher', url: 'https://atlauncher.com/downloads' },
   { id: 'prism', name: 'Prism Launcher', url: 'https://prismlauncher.org/download/' },
-  { id: 'lunar', name: 'Lunar Client', url: 'https://www.lunarclient.com/download' },
 ];
 
 const resourceSectionCopy: Record<UILanguage, { title: string; subtitle: string; toggle: string; openLink: string }> = {
@@ -386,7 +385,7 @@ const resourceSectionCopy: Record<UILanguage, { title: string; subtitle: string;
   },
 };
 
-const resourceDescriptions: Record<UILanguage, Record<ResourceId, string>> = {
+const resourceDescriptions: Record<UILanguage, Partial<Record<ResourceId, string>>> = {
   'zh-cn': {
     modrinth: '现代化模组与整合包平台，下载体验简洁快速。',
     curseforge: '主流模组与整合包分发平台，内容覆盖广。',
@@ -566,6 +565,7 @@ const resources: ResourceItem[] = [
   { id: 'minecraftWiki', name: 'Minecraft Wiki', url: 'https://minecraft.wiki/' },
   { id: 'planetMinecraft', name: 'Planet Minecraft', url: 'https://www.planetminecraft.com/' },
   { id: 'namemc', name: 'NameMC', url: 'https://namemc.com/' },
+  { id: 'tlauncher', name: 'TLauncher', url: 'https://tlauncher.org/en/' },
   { id: 'fabric', name: 'Fabric', url: 'https://fabricmc.net/' },
   { id: 'forge', name: 'Minecraft Forge', url: 'https://files.minecraftforge.net/net/minecraftforge/forge/' },
 ];
@@ -581,6 +581,12 @@ export default function FeaturesSection() {
   const descriptions = launcherDescriptions[uiLanguage];
   const resourceCopy = resourceSectionCopy[uiLanguage];
   const resourceTexts = resourceDescriptions[uiLanguage];
+  const tlauncherFallbackDescription =
+    uiLanguage === 'zh-cn'
+      ? '第三方启动器官网与下载页面。'
+      : uiLanguage === 'zh-hant' || uiLanguage === 'zh-hk' || uiLanguage === 'zh-tw'
+        ? '第三方啟動器官方網站與下載頁面。'
+        : 'Third-party launcher website and download page.';
 
   const features = [
     {
@@ -793,7 +799,7 @@ export default function FeaturesSection() {
                     </a>
                   </div>
                   <p className="text-sm text-foreground/75 leading-relaxed">
-                    {resourceTexts[resource.id]}
+                    {resourceTexts[resource.id] ?? (resource.id === 'tlauncher' ? tlauncherFallbackDescription : '')}
                   </p>
                   <a
                     href={resource.url}

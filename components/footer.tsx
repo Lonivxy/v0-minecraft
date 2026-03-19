@@ -1,6 +1,6 @@
 'use client';
 
-import { MessageCircle, Mail, School, Globe } from 'lucide-react';
+import { MessageCircle, Mail, School, Globe, Github } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 
 // Discord SVG Icon
@@ -49,6 +49,15 @@ export default function Footer() {
                 >
                   <Globe className="w-4 h-4 group-hover:scale-110 transition-transform" />
                   <span>{t.footer.ownerWebsite}</span>
+                </a>
+                <a
+                  href="https://github.com/Lonivxy/v0-minecraft"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-sm text-foreground/60 hover:text-primary transition-colors group"
+                >
+                  <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span>网站开源</span>
                 </a>
               </div>
             </div>

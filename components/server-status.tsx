@@ -206,16 +206,14 @@ export default function ServerStatus() {
       <div
         className={`mt-6 rounded-xl p-4 transition-all duration-300 ${isVisible ? 'animate-slide-up' : 'opacity-0'} ${
           isDark
-            ? 'border border-black/80 bg-black hover:border-primary/60'
+            ? 'border border-black/80 hover:border-primary/60'
             : 'border border-zinc-300/80 shadow-lg shadow-zinc-400/35 hover:border-zinc-500/80'
         }`}
         style={{
           animationDelay: scrollDirection === 'down' ? '380ms' : '0ms',
-          ...(isDark
-            ? {}
-            : {
-                background: 'radial-gradient(circle at center, rgb(9 9 11) 0%, rgb(82 82 91) 38%, rgb(250 250 250) 100%)',
-              }),
+          background: isDark
+            ? 'radial-gradient(circle at center, rgb(0 0 0) 0%, rgb(10 10 14) 32%, rgb(24 24 33) 58%, rgb(34 197 94 / 0.2) 82%, rgb(34 197 94 / 0.06) 100%)'
+            : 'radial-gradient(circle at center, rgb(0 0 0) 0%, rgb(28 28 35) 34%, rgb(113 113 122) 64%, rgb(244 244 245) 100%)',
         }}
       >
         <div className={`rounded-lg overflow-hidden ${isDark ? 'bg-black' : 'bg-zinc-900/95'}`}>
