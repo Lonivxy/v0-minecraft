@@ -201,6 +201,17 @@ export default function ServerStatus() {
         <p className="text-xs text-foreground/60 text-center">
           {t.status.serverIP}: <span className="text-primary font-mono">cgsbs.asia</span> | {t.status.autoRefresh} | <a href="https://namemc.com/server/cgsbs.asia?q=cgsbs.asia" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-cyan-400 transition-colors underline underline-offset-2">{t.status.viewOnNameMC}</a>
         </p>
+        <p className="text-sm text-foreground/80 text-center mt-3">
+          对于要玩Harpy列车的玩家
+          <a
+            href="https://github.com/Lonivxy/v0-minecraft/releases/download/DownloadsModpack/TLVotHE.1.3.2-DLC.exe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="ml-2 text-primary hover:text-cyan-400 transition-colors underline underline-offset-2"
+          >
+            点击此链接下载
+          </a>
+        </p>
       </div>
 
       <div
