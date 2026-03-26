@@ -700,6 +700,82 @@ html.light-mode .hero-star {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
+.announcement-content h1,
+.announcement-content h2,
+.announcement-content h3,
+.announcement-content h4 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.announcement-content h1 { font-size: 1.4rem; }
+.announcement-content h2 { font-size: 1.2rem; }
+.announcement-content h3 { font-size: 1.05rem; }
+
+.announcement-content p,
+.announcement-content ul,
+.announcement-content ol,
+.announcement-content blockquote,
+.announcement-content pre {
+  margin-bottom: 0.75rem;
+}
+
+.announcement-content ul,
+.announcement-content ol {
+  padding-left: 1.2rem;
+}
+
+.announcement-content ul { list-style: disc; }
+.announcement-content ol { list-style: decimal; }
+
+.announcement-content a {
+  color: color-mix(in oklab, var(--primary) 85%, white 15%);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.announcement-content code {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 0.1rem 0.35rem;
+  font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+.announcement-content pre {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.65rem;
+  padding: 0.75rem;
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.announcement-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.announcement-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 0.75rem;
+}
+
+.announcement-content th,
+.announcement-content td {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 0.4rem 0.5rem;
+  text-align: left;
+}
+
+.announcement-content blockquote {
+  border-left: 3px solid color-mix(in oklab, var(--primary) 70%, white 10%);
+  padding-left: 0.75rem;
+  color: color-mix(in oklab, var(--foreground) 70%, var(--muted-foreground) 30%);
+}
+
 @media (max-width: 768px) {
   .glass,
   .glass-strong {

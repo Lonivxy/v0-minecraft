@@ -7,6 +7,7 @@ import ServerStatus from '@/components/server-status';
 import FeaturesSection from '@/components/features-section';
 import Footer from '@/components/footer';
 import LoadingOverlay from '@/components/loading-overlay';
+import AnnouncementModal from '@/components/announcement-modal';
 import type { Language } from '@/lib/i18n';
 
 export default function ClientWrapper({ initialLanguage }: { initialLanguage?: Language }) {
@@ -28,6 +29,7 @@ export default function ClientWrapper({ initialLanguage }: { initialLanguage?: L
         </div>
       </main>
       <LoadingOverlay />
+      <AnnouncementModal />
     </SettingsProvider>
   );
 }
