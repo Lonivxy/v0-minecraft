@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { BellRing } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const ANNOUNCE_COOKIE = 'announce_ack_v1';
@@ -34,6 +35,7 @@ export default function AnnouncementModal() {
   const [loading, setLoading] = useState(true);
   const [consentCookies, setConsentCookies] = useState(false);
   const [countdown, setCountdown] = useState(FORCE_SECONDS);
+  const [isForcedRead, setIsForcedRead] = useState(false);
 
   const announceVersion = useMemo(() => hashString(content), [content]);
   const canClose = countdown <= 0;
@@ -58,7 +60,9 @@ export default function AnnouncementModal() {
         const acknowledged = getCookieValue(ANNOUNCE_COOKIE);
 
         setContent(text);
-        setVisible(acknowledged !== version);
+        const shouldAutoShow = acknowledged !== version;
+        setVisible(shouldAutoShow);
+        setIsForcedRead(shouldAutoShow);
       } finally {
         if (mounted) {
           setLoading(false);
@@ -74,6 +78,10 @@ export default function AnnouncementModal() {
 
   useEffect(() => {
     if (!visible) return;
+    if (!isForcedRead) {
+      setCountdown(0);
+      return;
+    }
     setCountdown(FORCE_SECONDS);
 
     const timer = window.setInterval(() => {
@@ -89,7 +97,7 @@ export default function AnnouncementModal() {
     return () => {
       window.clearInterval(timer);
     };
-  }, [visible, announceVersion]);
+  }, [visible, announceVersion, isForcedRead]);
 
   useEffect(() => {
     if (!visible) return;
@@ -100,10 +108,6 @@ export default function AnnouncementModal() {
       document.body.style.overflow = originalOverflow;
     };
   }, [visible]);
-
-  if (loading || !visible || !content) {
-    return null;
-  }
 
   const dismissForCurrentVersion = () => {
     if (!canClose || !consentCookies) return;
@@ -116,37 +120,63 @@ export default function AnnouncementModal() {
     setVisible(false);
   };
 
+  const openManual = () => {
+    setIsForcedRead(false);
+    setVisible(true);
+  };
+
+  if (loading || !content) {
+    return null;
+  }
+
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/65 px-4">
-      <div className="glass-strong w-full max-w-2xl rounded-2xl border border-white/10 p-6 shadow-2xl">
-        <h2 className="text-2xl font-semibold text-foreground">公告</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          请阅读最新公告。{canClose ? '你现在可以关闭公告。' : `请至少阅读 ${countdown} 秒后再关闭。`}
-        </p>
+    <>
+      <Button
+        type="button"
+        size="icon"
+        className="fixed bottom-5 right-5 z-[110] size-12 rounded-full shadow-xl shadow-primary/25"
+        onClick={openManual}
+        aria-label="查看公告"
+        title="查看公告"
+      >
+        <BellRing className="size-5" />
+      </Button>
 
-        <div className="announcement-content mt-4 max-h-[52vh] overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-4">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+      {visible ? (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/65 px-4">
+          <div className="glass-strong w-full max-w-2xl rounded-2xl border border-white/10 p-6 shadow-2xl">
+            <h2 className="text-2xl font-semibold text-foreground">公告</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {isForcedRead
+                ? (canClose ? '你现在可以关闭公告。' : `请至少阅读 ${countdown} 秒后再关闭。`)
+                : '你可以随时关闭。'}
+            </p>
+
+            <div className="announcement-content mt-4 max-h-[52vh] overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-4">
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            </div>
+
+            <label className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                className="mt-0.5 h-4 w-4 accent-primary"
+                checked={consentCookies}
+                onChange={(event) => setConsentCookies(event.target.checked)}
+              />
+              <span>我同意使用 Cookie 记录“此公告版本不再提醒”。</span>
+            </label>
+
+            <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button type="button" variant="secondary" onClick={dismissOnce} disabled={!canClose}>
+                稍后提醒我
+              </Button>
+              <Button type="button" onClick={dismissForCurrentVersion} disabled={!canClose || !consentCookies}>
+                同意并在本次公告后不再提醒
+              </Button>
+            </div>
+          </div>
         </div>
-
-        <label className="mt-4 flex items-start gap-2 text-sm text-muted-foreground">
-          <input
-            type="checkbox"
-            className="mt-0.5 h-4 w-4 accent-primary"
-            checked={consentCookies}
-            onChange={(event) => setConsentCookies(event.target.checked)}
-          />
-          <span>我同意使用 Cookie 记录“此公告版本不再提醒”。</span>
-        </label>
-
-        <div className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button type="button" variant="secondary" onClick={dismissOnce} disabled={!canClose}>
-            稍后提醒我
-          </Button>
-          <Button type="button" onClick={dismissForCurrentVersion} disabled={!canClose || !consentCookies}>
-            同意并在本次公告后不再提醒
-          </Button>
-        </div>
-      </div>
-    </div>
+      ) : null}
+    </>
   );
 }
