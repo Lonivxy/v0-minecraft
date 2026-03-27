@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import type { ComponentType } from 'react';
-import { Compass, Home, Radio, Sparkles, ScrollText, Menu, X } from 'lucide-react';
+import { Compass, Home, Radio, Sparkles, ScrollText, Gamepad2, Menu, X } from 'lucide-react';
 import { useSettings } from '@/lib/settings-context';
 
 type NavItem = {
@@ -12,7 +12,7 @@ type NavItem = {
 };
 
 export default function QuickSideNav() {
-  const { t } = useSettings();
+  const { t, language } = useSettings();
   const [desktopOpen, setDesktopOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeId, setActiveId] = useState('hero');
@@ -22,9 +22,14 @@ export default function QuickSideNav() {
       { id: 'hero', icon: Home, label: t.nav.home },
       { id: 'status', icon: Radio, label: t.status.title },
       { id: 'features', icon: Sparkles, label: t.features.title },
+      {
+        id: 'launchers',
+        icon: Gamepad2,
+        label: language.startsWith('en') ? 'Launchers' : '常用启动器',
+      },
       { id: 'rules', icon: ScrollText, label: t.nav.rules },
     ],
-    [t]
+    [t, language]
   );
 
   useEffect(() => {
@@ -79,6 +84,7 @@ export default function QuickSideNav() {
           className={`flex items-stretch transition-transform duration-500 ease-out ${desktopOpen ? 'translate-x-0' : '-translate-x-[calc(100%-2.9rem)]'}`}
           onMouseEnter={() => setDesktopOpen(true)}
           onMouseLeave={() => setDesktopOpen(false)}
+          style={{ contain: 'layout paint' }}
         >
           <button
             type="button"
@@ -87,7 +93,7 @@ export default function QuickSideNav() {
           >
             <Compass className="h-4 w-4" />
           </button>
-          <nav className="glass-strong flex min-w-56 flex-col gap-1 rounded-r-2xl border border-glass-border border-l-0 p-2 shadow-xl shadow-black/30">
+          <nav className="side-nav-panel flex min-w-56 flex-col gap-1 rounded-r-2xl border border-glass-border border-l-0 p-2 shadow-xl shadow-black/30">
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = activeId === item.id;
@@ -115,7 +121,7 @@ export default function QuickSideNav() {
         <button
           type="button"
           onClick={() => setMobileOpen((prev) => !prev)}
-          className="glass-strong flex h-11 w-11 items-center justify-center rounded-full border border-glass-border shadow-lg shadow-black/35 transition-transform duration-300 active:scale-95"
+          className="side-nav-fab flex h-11 w-11 items-center justify-center rounded-full border border-glass-border shadow-lg shadow-black/35 transition-transform duration-300 active:scale-95"
           aria-label={mobileOpen ? 'Close quick navigation' : 'Open quick navigation'}
           aria-expanded={mobileOpen}
         >
@@ -123,7 +129,7 @@ export default function QuickSideNav() {
         </button>
 
         <nav
-          className={`glass-strong absolute bottom-14 left-0 flex w-56 flex-col gap-1 rounded-2xl border border-glass-border p-2 shadow-xl shadow-black/30 transition-all duration-300 ${
+          className={`side-nav-panel absolute bottom-14 left-0 flex w-56 flex-col gap-1 rounded-2xl border border-glass-border p-2 shadow-xl shadow-black/30 transition-all duration-300 ${
             mobileOpen ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-4 opacity-0'
           }`}
         >
