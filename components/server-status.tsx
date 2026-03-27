@@ -94,7 +94,7 @@ export default function ServerStatus() {
 
   if (loading) {
     return (
-      <section ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+      <section id="status" ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-12 text-center">
           {t.status.title}
         </h2>
@@ -115,7 +115,7 @@ export default function ServerStatus() {
   const version = status?.version ?? '1.20.4';
 
   return (
-    <section ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+    <section id="status" ref={sectionRef} className="py-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-center gap-4 mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold text-foreground text-center">
           {t.status.title}

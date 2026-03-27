@@ -7,6 +7,7 @@ import ServerStatus from '@/components/server-status';
 import FeaturesSection from '@/components/features-section';
 import Footer from '@/components/footer';
 import AnnouncementModal from '@/components/announcement-modal';
+import QuickSideNav from '@/components/quick-side-nav';
 import type { Language } from '@/lib/i18n';
 
 export default function ClientWrapper({ initialLanguage }: { initialLanguage?: Language }) {
@@ -21,6 +22,7 @@ export default function ClientWrapper({ initialLanguage }: { initialLanguage?: L
 
         <div className="relative z-10">
           <Navbar />
+          <QuickSideNav />
           <HeroSection />
           <ServerStatus />
           <FeaturesSection />

@@ -663,7 +663,7 @@ export default function FeaturesSection() {
   };
 
   return (
-    <section ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
+    <section id="features" ref={sectionRef} className="py-20 px-4 sm:px-6 lg:px-8 relative z-10">
       <div className="max-w-7xl mx-auto">
         <div
           className={`text-center mb-16 ${isVisible ? 'animate-slide-up' : 'opacity-0'}`}

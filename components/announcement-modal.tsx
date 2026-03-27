@@ -134,7 +134,7 @@ export default function AnnouncementModal() {
       <Button
         type="button"
         size="icon"
-        className="fixed bottom-5 right-5 z-[110] size-12 rounded-full shadow-xl shadow-primary/25"
+        className="announcement-bell fixed bottom-5 right-5 z-[110] size-12 rounded-full shadow-xl shadow-primary/25 transition-transform duration-300 hover:scale-110"
         onClick={openManual}
         aria-label="查看公告"
         title="查看公告"
@@ -143,8 +143,8 @@ export default function AnnouncementModal() {
       </Button>
 
       {visible ? (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/65 px-4">
-          <div className="glass-strong w-full max-w-2xl rounded-2xl border border-white/10 p-6 shadow-2xl">
+        <div className="announcement-overlay fixed inset-0 z-[120] flex items-center justify-center bg-black/65 px-4">
+          <div className="announcement-panel glass-strong w-full max-w-2xl rounded-2xl border border-white/10 p-6 shadow-2xl">
             <h2 className="text-2xl font-semibold text-foreground">公告</h2>
             <p className="mt-1 text-sm text-muted-foreground">
               {isForcedRead
@@ -152,7 +152,7 @@ export default function AnnouncementModal() {
                 : '你可以随时关闭。'}
             </p>
 
-            <div className="announcement-content mt-4 max-h-[52vh] overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-4">
+            <div className="announcement-content animate-slide-up mt-4 max-h-[52vh] overflow-y-auto rounded-xl border border-white/10 bg-black/20 p-4">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
             </div>
 

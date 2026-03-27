@@ -71,6 +71,9 @@
   * {
     @apply border-border outline-ring/50;
   }
+html {
+    scroll-behavior: smooth;
+  }
 body {
     @apply bg-background text-foreground;
     transition: background-color 0.4s ease, color 0.4s ease;
@@ -774,6 +777,59 @@ html.light-mode .hero-star {
   border-left: 3px solid color-mix(in oklab, var(--primary) 70%, white 10%);
   padding-left: 0.75rem;
   color: color-mix(in oklab, var(--foreground) 70%, var(--muted-foreground) 30%);
+}
+
+.nav-handle {
+  animation: nav-handle-breathe 2.2s ease-in-out infinite;
+}
+
+@keyframes nav-handle-breathe {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    box-shadow: 0 0 20px color-mix(in oklab, var(--primary) 30%, transparent);
+    transform: translate3d(2px, 0, 0);
+  }
+}
+
+.announcement-overlay {
+  animation: fade-in 280ms ease-out forwards;
+}
+
+.announcement-panel {
+  animation: announcement-pop-in 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  transform-origin: center;
+}
+
+.announcement-bell {
+  animation: bell-bob 2.8s ease-in-out infinite;
+}
+
+@keyframes announcement-pop-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes bell-bob {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  45% {
+    transform: translate3d(0, -4px, 0);
+  }
+  70% {
+    transform: translate3d(0, -1px, 0);
+  }
 }
 
 @media (max-width: 768px) {
